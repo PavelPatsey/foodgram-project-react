@@ -1,3 +1,6 @@
-from django.shortcuts import render
+from djoser.views import UserViewSet
+from .pagination import UsersPagination
 
-# Create your views here.
+
+class CustomUserViewSet(UserViewSet):
+    pagination_class = UsersPagination
