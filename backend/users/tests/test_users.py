@@ -260,3 +260,12 @@ class UsersViewsTest(TestCase):
             "last_name": "",
         }
         self.assertEqual(response.json(), test_json)
+
+    def test_current_user_profile_401(self):
+        """Профиль текущего пользователя.
+        401 пользователь не авторизован."""
+        url = "/api/users/me/"
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
