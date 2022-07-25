@@ -27,7 +27,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             "password",
         )
         extra_kwargs = {
-            # "password": {"write_only": True},
-            # "id": {"read_only": True},
-            'email': {'required': True},
+            "email": {"required": True},
+            "first_name": {"required": True},
+            "last_name": {"required": True},
         }

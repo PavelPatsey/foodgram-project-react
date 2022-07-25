@@ -145,7 +145,7 @@ class UsersViewsTest(TestCase):
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json(), {"password": ["Обязательное поле."]})
-    
+
     def test_create_user_without_email(self):
         """Регистрация пользователя без почты."""
         url = "/api/users/"
@@ -160,7 +160,7 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.json(), {"email": ["Обязательное поле."]})
 
     def test_create_user_without_username(self):
-        """Регистрация пользователя имени пользователя."""
+        """Регистрация пользователя без имени пользователя."""
         url = "/api/users/"
         data = {
             "email": "vpupkin@yandex.ru",
@@ -170,8 +170,30 @@ class UsersViewsTest(TestCase):
         }
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), {'username': ['Обязательное поле.']})
+        self.assertEqual(response.json(), {"username": ["Обязательное поле."]})
 
-    # print("!!!")
-    # from pprint import pprint
-    # pprint(response.json())
+    def test_create_user_without_first_name(self):
+        """Регистрация пользователя без first_name."""
+        url = "/api/users/"
+        data = {
+            "email": "vpupkin@yandex.ru",
+            "username": "vasya.pupkin",
+            "last_name": "Пупкин",
+            "password": "s4433kfywyfhvnsklqlqllq",
+        }
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json(), {"first_name": ["Обязательное поле."]})
+
+    def test_create_user_without_last_name(self):
+        """Регистрация пользователя без last_name."""
+        url = "/api/users/"
+        data = {
+            "email": "vpupkin@yandex.ru",
+            "username": "vasya.pupkin",
+            "first_name": "Вася",
+            "password": "s4433kfywyfhvnsklqlqllq",
+        }
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json(), {"last_name": ["Обязательное поле."]})
