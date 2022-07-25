@@ -148,4 +148,5 @@ DJOSER = {
         "user_create": "users.serializers.CustomUserCreateSerializer",
     },
     "HIDE_USERS": False,
+    "LOGIN_FIELD": "email",
 }
