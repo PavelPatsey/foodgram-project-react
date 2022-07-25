@@ -1,6 +1,7 @@
 from djoser.views import UserViewSet
-from .pagination import UsersPagination
+
 from .models import User
+from .pagination import UsersPagination
 
 
 class CustomUserViewSet(UserViewSet):
