@@ -339,3 +339,17 @@ class UsersViewsTest(TestCase):
             ]
         }
         self.assertEqual(response.json(), test_json)
+
+    def test_deleting_token(self):
+        """Удаление токена."""
+        url = "/api/auth/token/logout/"
+        response = self.authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_deleting_token_401(self):
+        """Удаление токена. 401 пользователь не авторизован."""
+        url = "/api/auth/token/logout/"
+        response = self.guest_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
