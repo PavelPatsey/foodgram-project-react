@@ -1,4 +1,3 @@
-import json
 import unittest
 
 from django.test import TestCase
@@ -212,3 +211,39 @@ class UsersViewsTest(TestCase):
             response.json(),
             {"first_name": ["Обязательное поле."], "last_name": ["Обязательное поле."]},
         )
+
+    def test_user_profile(self):
+        """Профиль пользователя."""
+        user = User.objects.get(username="authorized_user")
+        url = f"/api/users/{user.id}/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_json = {
+            "email": "",
+            "id": 1,
+            "username": "authorized_user",
+            "first_name": "",
+            "last_name": "",
+        }
+        self.assertEqual(response.json(), test_json)
+
+    def test_user_profile_by_unauthorized_user(self):
+        """Профиль пользователя.
+        Учетные данные не были предоставлены."""
+        user = User.objects.get(username="authorized_user")
+        url = f"/api/users/{user.id}/"
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {'detail': 'Учетные данные не были предоставлены.'}
+        self.assertEqual(response.json(), test_json)
+
+    def test_user_profile_404(self):
+        """Профиль пользователя. Страница не найдена."""
+        user = User.objects.get(username="authorized_user")
+        url = f"/api/users/{user.id + 1}/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        test_json = {
+            "detail": "Страница не найдена."
+        }
+        self.assertEqual(response.json(), test_json)
