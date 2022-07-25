@@ -1,4 +1,5 @@
 import unittest
+
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -55,19 +56,34 @@ class UsersViewsTest(TestCase):
             first_name="Vasya",
             last_name="Pupkin",
         )
-        User.objects.create(username="Vasya")
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        test_json = [
-            {
-                "email": "",
-                "id": 1,
-                "username": "authorized_user",
-                "first_name": "",
-                "last_name": "",
-            }
-        ]
-        breakpoint()
-        print("!!!")
-        print(response.json())
+        test_json = {
+            "count": 3,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "email": "",
+                    "id": 1,
+                    "username": "authorized_user",
+                    "first_name": "",
+                    "last_name": "",
+                },
+                {
+                    "email": "",
+                    "id": 2,
+                    "username": "testusername",
+                    "first_name": "",
+                    "last_name": "",
+                },
+                {
+                    "email": "vasya_pupkin@mail.com",
+                    "id": 3,
+                    "username": "vasya_pupkin",
+                    "first_name": "Vasya",
+                    "last_name": "Pupkin",
+                },
+            ],
+        }
         self.assertEqual(response.json(), test_json)
