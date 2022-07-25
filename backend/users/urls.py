@@ -3,12 +3,13 @@ from rest_framework.routers import DefaultRouter
 
 from .views import CustomUserViewSet
 
-router = DefaultRouter()
+app_name = "api_users"
 
+router = DefaultRouter()
 router.register("users", CustomUserViewSet)
 
 urlpatterns = [
-    path("api/", include("djoser.urls")),
-    # path("api/", include(router.urls)),
-    path("api/auth/", include("djoser.urls.authtoken")),
+    path("", include(router.urls)),
+    # path("", include("djoser.urls")),
+    path("auth/", include("djoser.urls.authtoken")),
 ]
