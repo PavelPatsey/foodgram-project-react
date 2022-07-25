@@ -197,3 +197,18 @@ class UsersViewsTest(TestCase):
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json(), {"last_name": ["Обязательное поле."]})
+
+    def test_create_user_without_first_last_names(self):
+        """Регистрация пользователя без имени и фамилии."""
+        url = "/api/users/"
+        data = {
+            "email": "vpupkin@yandex.ru",
+            "username": "vasya.pupkin",
+            "password": "s4433kfywyfhvnsklqlqllq",
+        }
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json(),
+            {"first_name": ["Обязательное поле."], "last_name": ["Обязательное поле."]},
+        )
