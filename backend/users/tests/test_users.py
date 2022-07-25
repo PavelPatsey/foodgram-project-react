@@ -87,3 +87,26 @@ class UsersViewsTest(TestCase):
             ],
         }
         self.assertEqual(response.json(), test_json)
+
+    def test_create_user(self):
+        """Регистрация пользователя."""
+        url = "/api/users/"
+        users_count = User.objects.count()
+        data = {
+            "email": "vpupkin@yandex.ru",
+            "username": "vasya.pupkin",
+            "first_name": "Вася",
+            "last_name": "Пупкин",
+            "password": "s4433kfywyfhvnsklqlqllq",
+        }
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), users_count + 1)
+        test_json = {
+            "email": "vpupkin@yandex.ru",
+            "id": 2,
+            "username": "vasya.pupkin",
+            "first_name": "Вася",
+            "last_name": "Пупкин",
+        }
+        self.assertEqual(response.json(), test_json)
