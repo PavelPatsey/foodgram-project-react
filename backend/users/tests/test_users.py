@@ -315,3 +315,27 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
+
+    def test_get_authorization_token(self):
+        """Получить токен авторизации."""
+        url = "/api/auth/token/login/"
+        User.objects.create_user(
+            username="test_user", password="1wkfy267snsndndnd", email="test@mail.ru"
+        )
+        data = {"password": "1wkfy267snsndndnd", "email": "test@mail.ru"}
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue("auth_token" in response.json().keys())
+
+    def test_get_authorization_token_with_invalid_data(self):
+        """Получить токен авторизации с невалидными данными."""
+        url = "/api/auth/token/login/"
+        data = {"password": "string", "email": "string"}
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {
+            "non_field_errors": [
+                "Невозможно войти с предоставленными учетными данными."
+            ]
+        }
+        self.assertEqual(response.json(), test_json)
