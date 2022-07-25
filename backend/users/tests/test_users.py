@@ -269,3 +269,37 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
+
+    def test_set_password(self):
+        """Изменение пароля."""
+        url = "/api/users/set_password/"
+        user = User.objects.create_user(
+            username="test_user",
+            password="1wkfy267snsndndnd",
+        )
+        client = APIClient()
+        client.force_authenticate(user)
+        data = {
+            "new_password": "yydhdhdje81ihnsksd",
+            "current_password": "1wkfy267snsndndnd",
+        }
+        response = client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_set_password_incorrect_current_password(self):
+        """Изменение пароля. Некорректный текущий пароль."""
+        url = "/api/users/set_password/"
+        user = User.objects.create_user(
+            username="test_user",
+            password="1wkfy267snsndndnd",
+        )
+        client = APIClient()
+        client.force_authenticate(user)
+        data = {
+            "new_password": "yydhdhdje81ihnsksd",
+            "current_password": "123",
+        }
+        response = client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"current_password": ["Неправильный пароль."]}
+        self.assertEqual(response.json(), test_json)
