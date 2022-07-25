@@ -104,7 +104,7 @@ class UsersViewsTest(TestCase):
         self.assertEqual(User.objects.count(), users_count + 1)
         test_json = {
             "email": "vpupkin@yandex.ru",
-            "id": 2,
+            "id": users_count + 1,
             "username": "vasya.pupkin",
             "first_name": "Вася",
             "last_name": "Пупкин",
@@ -220,7 +220,7 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
             "email": "",
-            "id": 1,
+            "id": user.id,
             "username": "authorized_user",
             "first_name": "",
             "last_name": "",
@@ -234,7 +234,7 @@ class UsersViewsTest(TestCase):
         url = f"/api/users/{user.id}/"
         response = self.guest_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        test_json = {'detail': 'Учетные данные не были предоставлены.'}
+        test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
 
     def test_user_profile_404(self):
@@ -243,7 +243,20 @@ class UsersViewsTest(TestCase):
         url = f"/api/users/{user.id + 1}/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        test_json = {"detail": "Страница не найдена."}
+        self.assertEqual(response.json(), test_json)
+
+    def test_current_user_profile(self):
+        """Профиль текущего пользователя."""
+        user = User.objects.get(username="authorized_user")
+        url = "/api/users/me/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
-            "detail": "Страница не найдена."
+            "email": "",
+            "id": user.id,
+            "username": "authorized_user",
+            "first_name": "",
+            "last_name": "",
         }
         self.assertEqual(response.json(), test_json)
