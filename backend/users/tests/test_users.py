@@ -112,6 +112,27 @@ class UsersViewsTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_create_user_with_simple_password(self):
+        """Регистрация пользователя с простым паролем."""
+        url = "/api/users/"
+        data = {
+            "email": "vpupkin@yandex.ru",
+            "username": "vasya.pupkin",
+            "first_name": "Вася",
+            "last_name": "Пупкин",
+            "password": "123",
+        }
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {
+            "password": [
+                "Введённый пароль слишком короткий. Он должен содержать как минимум 8 символов.",
+                "Введённый пароль слишком широко распространён.",
+                "Введённый пароль состоит только из цифр.",
+            ]
+        }
+        self.assertEqual(response.json(), test_json)
+
     def test_create_user_without_email(self):
         """Регистрация пользователя без почты."""
         url = "/api/users/"
@@ -123,9 +144,22 @@ class UsersViewsTest(TestCase):
         }
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), {'email': ['Обязательное поле.']})
+        self.assertEqual(response.json(), {"email": ["Обязательное поле."]})
 
+    # def test_create_user_without_username(self):
+    #     """Регистрация пользователя имени пользователя."""
+    #     url = "/api/users/"
+    #     data = {
+    #         "email": "vpupkin@yandex.ru",
+    #         "username": "vasya.pupkin",
+    #         "first_name": "Вася",
+    #         "last_name": "Пупкин",
+    #         "password": "s4433kfywyfhvnsklqlqllq",
+    #     }
+    #     response = self.guest_client.post(url, data)
+    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    #     self.assertEqual(response.json(), {'email': ['Обязательное поле.']})
 
-        # print("!!!")
-        # from pprint import pprint
-        # pprint(response.json())
+    # print("!!!")
+    # from pprint import pprint
+    # pprint(response.json())
