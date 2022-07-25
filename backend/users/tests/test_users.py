@@ -1,3 +1,4 @@
+import json
 import unittest
 
 from django.test import TestCase
@@ -110,3 +111,21 @@ class UsersViewsTest(TestCase):
             "last_name": "Пупкин",
         }
         self.assertEqual(response.json(), test_json)
+
+    def test_create_user_without_email(self):
+        """Регистрация пользователя без почты."""
+        url = "/api/users/"
+        data = {
+            "username": "vasya.pupkin",
+            "first_name": "Вася",
+            "last_name": "Пупкин",
+            "password": "s4433kfywyfhvnsklqlqllq",
+        }
+        response = self.guest_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json(), {'email': ['Обязательное поле.']})
+
+
+        # print("!!!")
+        # from pprint import pprint
+        # pprint(response.json())
