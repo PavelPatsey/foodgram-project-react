@@ -138,4 +138,5 @@ dmypy.json
 *.csv#
 
 # папки со статикой и медиа
-static/
+static_backend/
+media/
