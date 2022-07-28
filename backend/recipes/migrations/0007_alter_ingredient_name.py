@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0006_remove_ingredient_unique ingredient_and_more'),
+        ("recipes", "0006_remove_ingredient_unique ingredient_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ingredient',
-            name='name',
-            field=models.CharField(max_length=120, verbose_name='Название'),
+            model_name="ingredient",
+            name="name",
+            field=models.CharField(max_length=120, verbose_name="Название"),
         ),
     ]
