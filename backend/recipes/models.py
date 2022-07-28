@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class Tag(models.Model):
     name = models.CharField(
@@ -38,3 +40,43 @@ class Ingredient(models.Model):
             "name",
             "measurement_unit",
         )
+
+
+class Recipe(models.Model):
+    tags = models.ManyToManyField(
+        Tag,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name="Список тегов",
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Автор рецепта",
+    )
+    # ingredients = models.ManyToManyField(
+    #     Ingredient,
+    #     blank=True,
+    #     null=True,
+    #     on_delete=models.SET_NULL,
+    #     verbose_name="Список ингредиентов",
+    # )
+    ingredients = связь с таблицей ингридиенты + количество
+    name = models.CharField(
+        max_length=200,
+        verbose_name="Название",
+    )
+    # image =
+    text = models.TextField(verbose_name="Описание")
+    cooking_time = models.IntegerField(
+        verbose_name="Время приготовления (в минутах)",
+    )
+
+
+
+user = models.ForeignKey(
+    User,
+    models.SET_NULL,
+    blank=True,
+    null=True,
+)
