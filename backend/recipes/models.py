@@ -25,11 +25,11 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        max_length=120,
+        max_length=200,
         verbose_name="Название",
     )
     measurement_unit = models.CharField(
-        max_length=7,
+        max_length=120,
         verbose_name="Цвет в HEX",
     )
 
