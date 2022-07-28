@@ -20,7 +20,6 @@ class Tag(models.Model):
         unique_together = (
             "name",
             "color",
-            "slug",
         )
 
 

@@ -9,7 +9,7 @@ from users.models import User
 from ..models import Tag
 
 
-class TagViewsTest(TestCase):
+class TagTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.guest_client = APIClient()
