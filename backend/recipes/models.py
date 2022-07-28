@@ -16,6 +16,13 @@ class Tag(models.Model):
         verbose_name="Уникальный слаг",
     )
 
+    class Meta:
+        unique_together = (
+            "name",
+            "color",
+            "slug",
+        )
+
 
 class Ingredient(models.Model):
     name = models.CharField(
