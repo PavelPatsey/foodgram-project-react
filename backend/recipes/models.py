@@ -88,4 +88,4 @@ class Recipe(models.Model):
     )
 
     def __str__(self):
-        return self.author + self.name
+        return str(self.author) + ', ' + str(self.name)
