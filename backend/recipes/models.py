@@ -42,6 +42,15 @@ class Ingredient(models.Model):
         )
 
 
+class IngredientAmount(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        verbose_name="Ингредиент",
+    )
+    amount = models.ImageField(verbose_name="Количество")
+
+
 class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
@@ -54,24 +63,23 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Автор рецепта",
     )
-    # ingredients = models.ManyToManyField(
-    #     Ingredient,
-    #     blank=True,
-    #     null=True,
-    #     on_delete=models.SET_NULL,
-    #     verbose_name="Список ингредиентов",
-    # )
-    ingredients = связь с таблицей ингридиенты + количество
+    ingredients = models.ManyToManyField(
+        IngredientAmount,
+        on_delete=models.CASCADE,
+        verbose_name="Список ингредиентов",
+    )
     name = models.CharField(
         max_length=200,
         verbose_name="Название",
     )
-    # image =
+    image = models.ImageField(
+        upload_to="media/recipes/images/",
+        verbose_name="Картинка",
+    )
     text = models.TextField(verbose_name="Описание")
     cooking_time = models.IntegerField(
         verbose_name="Время приготовления (в минутах)",
     )
-
 
 
 user = models.ForeignKey(
