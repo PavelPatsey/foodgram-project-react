@@ -24,6 +24,9 @@ class Tag(models.Model):
             "color",
         )
 
+    def __str__(self):
+        return self.slug[:15]
+
 
 class Ingredient(models.Model):
     name = models.CharField(
@@ -41,6 +44,9 @@ class Ingredient(models.Model):
             "measurement_unit",
         )
 
+    def __str__(self):
+        return self.name + self.measurement_unit
+
 
 class IngredientAmount(models.Model):
     ingredient = models.ForeignKey(
@@ -49,6 +55,9 @@ class IngredientAmount(models.Model):
         verbose_name="Ингредиент",
     )
     amount = models.ImageField(verbose_name="Количество")
+
+    def __str__(self):
+        return self.ingredient + self.amount
 
 
 class Recipe(models.Model):
@@ -78,10 +87,5 @@ class Recipe(models.Model):
         verbose_name="Время приготовления (в минутах)",
     )
 
-
-user = models.ForeignKey(
-    User,
-    models.SET_NULL,
-    blank=True,
-    null=True,
-)
+    def __str__(self):
+        return self.author + self.name
