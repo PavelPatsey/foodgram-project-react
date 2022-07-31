@@ -54,8 +54,6 @@ class IngredientAmount(models.Model):
 class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
-        null=True,
-        on_delete=models.SET_NULL,
         verbose_name="Список тегов",
     )
     author = models.ForeignKey(
@@ -65,7 +63,6 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         IngredientAmount,
-        on_delete=models.CASCADE,
         verbose_name="Список ингредиентов",
     )
     name = models.CharField(
