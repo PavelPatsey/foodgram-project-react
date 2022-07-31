@@ -45,7 +45,7 @@ class Ingredient(models.Model):
         )
 
     def __str__(self):
-        return self.name + self.measurement_unit
+        return self.name + ", " + str(self.measurement_unit)
 
 
 class IngredientAmount(models.Model):
@@ -54,10 +54,10 @@ class IngredientAmount(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Ингредиент",
     )
-    amount = models.ImageField(verbose_name="Количество")
+    amount = models.IntegerField(verbose_name="Количество")
 
     def __str__(self):
-        return self.ingredient + self.amount
+        return str(self.ingredient) + " * " + str(self.amount)
 
 
 class Recipe(models.Model):
