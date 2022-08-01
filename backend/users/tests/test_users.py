@@ -4,7 +4,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from users.models import User
+from users.models import Subscription, User
 
 
 class UsersViewsTest(TestCase):
@@ -50,11 +50,15 @@ class UsersViewsTest(TestCase):
         """Получение списка всех пользователей авторизованным пользователем."""
         url = "/api/users/"
         User.objects.create_user(username="testusername")
-        User.objects.create_user(
+        user = User.objects.create_user(
             email="vasya_pupkin@mail.com",
             username="vasya_pupkin",
             first_name="Vasya",
             last_name="Pupkin",
+        )
+        Subscription.objects.create(
+            user=self.user,
+            author=user,
         )
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -69,6 +73,7 @@ class UsersViewsTest(TestCase):
                     "username": "authorized_user",
                     "first_name": "",
                     "last_name": "",
+                    "is_subscribed": False,
                 },
                 {
                     "email": "",
@@ -76,6 +81,7 @@ class UsersViewsTest(TestCase):
                     "username": "testusername",
                     "first_name": "",
                     "last_name": "",
+                    "is_subscribed": False,
                 },
                 {
                     "email": "vasya_pupkin@mail.com",
@@ -83,6 +89,7 @@ class UsersViewsTest(TestCase):
                     "username": "vasya_pupkin",
                     "first_name": "Vasya",
                     "last_name": "Pupkin",
+                    "is_subscribed": True,
                 },
             ],
         }
@@ -222,6 +229,7 @@ class UsersViewsTest(TestCase):
             "email": "",
             "id": user.id,
             "username": "authorized_user",
+            "is_subscribed": False,
             "first_name": "",
             "last_name": "",
         }
@@ -258,6 +266,7 @@ class UsersViewsTest(TestCase):
             "username": "authorized_user",
             "first_name": "",
             "last_name": "",
+            "is_subscribed": False,
         }
         self.assertEqual(response.json(), test_json)
 
