@@ -66,10 +66,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         ]
 
     def get_is_favorited(self, obj):
-        return True
+        return False
 
     def get_is_in_shopping_cart(self, obj):
-        return True
+        return False
 
 
 # {
