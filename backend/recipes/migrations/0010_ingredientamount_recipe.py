@@ -25,7 +25,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("amount", models.ImageField(upload_to="", verbose_name="Количество")),
+                (
+                    "amount",
+                    models.ImageField(upload_to="", verbose_name="Количество"),
+                ),
                 (
                     "ingredient",
                     models.ForeignKey(
@@ -48,11 +51,15 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("name", models.CharField(max_length=200, verbose_name="Название")),
+                (
+                    "name",
+                    models.CharField(max_length=200, verbose_name="Название"),
+                ),
                 (
                     "image",
                     models.ImageField(
-                        upload_to="media/recipes/images/", verbose_name="Картинка"
+                        upload_to="media/recipes/images/",
+                        verbose_name="Картинка",
                     ),
                 ),
                 ("text", models.TextField(verbose_name="Описание")),
