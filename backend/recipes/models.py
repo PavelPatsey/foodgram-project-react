@@ -57,7 +57,7 @@ class IngredientAmount(models.Model):
     amount = models.IntegerField(verbose_name="Количество")
 
     def __str__(self):
-        return str(self.ingredient) + " * " + str(self.amount)
+        return f"{self.ingredient} * {self.amount}"
 
 
 class Recipe(models.Model):
