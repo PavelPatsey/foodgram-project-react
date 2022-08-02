@@ -90,9 +90,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    tags = serializers.StringRelatedField(many=True)
     author = CustomUserSerializer(required=False)
-    ingredients = IngredientWriteAmountSerializer(many=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
@@ -103,7 +101,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             "id",
             "tags",
             "author",
-            "ingredients",
+            # "ingredients",
             "is_favorited",
             "is_in_shopping_cart",
             "name",
@@ -111,6 +109,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             "text",
             "cooking_time",
         ]
+
+    def create(self, validated_data):
+        # breakpoint()
+        tags_data = validated_data.pop("tags")
+        recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags_data)
+        return recipe
 
     def get_is_favorited(self, obj):
         return False
