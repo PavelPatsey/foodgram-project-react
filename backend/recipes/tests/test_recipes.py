@@ -36,6 +36,11 @@ class RecipeTest(TestCase):
             color="#6AA84FFF",
             slug="breakfast",
         )
+        cls.tag_2 = Tag.objects.create(
+            name="test Обед",
+            color="#6AA84FFF",
+            slug="dinner",
+        )
         cls.ingredientamount_1 = IngredientAmount.objects.create(
             ingredient=cls.ingredient_1,
             amount=5,
@@ -141,7 +146,7 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
-    def test_get_recipes_detail_authorized_client(self):
+    def test_get_recipe_detail_authorized_client(self):
         """Получение рецепта авторизованным пользователем."""
         url = f"/api/recipes/{self.user.id}/"
         response = self.authorized_client.get(url)
@@ -186,3 +191,20 @@ class RecipeTest(TestCase):
             "cooking_time": 4,
         }
         self.assertEqual(response.json(), test_json)
+
+    # def test_create_recipe_authorized_client(self):
+    #     """Создание рецепта авторизованным пользователем."""
+    #     url = "/api/recipes/"
+    #     data = {
+    #         "ingredients": [{"id": self.ingredient_1.id, "amount": 10}],
+    #         # "tags": [self.tag.id, self.tag_2.id],
+    #         "tags": [1, 2],
+    #         "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+    #         "name": "Тестовый рецепт обеда",
+    #         "text": "Описание тестового рецепта обеда",
+    #         "cooking_time": 30,
+    #     }
+    #     response = self.authorized_client.post(url, data)
+    #     from pprint import pprint
+    #     pprint(response.json())
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
