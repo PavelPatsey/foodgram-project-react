@@ -1,9 +1,14 @@
 from rest_framework import viewsets
+from rest_framework.permissions import SAFE_METHODS
 
 from .models import Ingredient, Recipe, Tag
 from .pagination import RecipePagination
-from .serializers import (IngredientSerializer, RecipeReadSerializer,
-                          RecipeWriteSerializer, TagSerializer)
+from .serializers import (
+    IngredientSerializer,
+    RecipeReadSerializer,
+    RecipeWriteSerializer,
+    TagSerializer,
+)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -24,6 +29,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
-        if self.action in ["list", "retrieve"]:
+        if self.request.method in SAFE_METHODS:
             return RecipeReadSerializer
         return RecipeWriteSerializer

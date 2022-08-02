@@ -27,7 +27,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         ]
 
 
-class IngredientReadAmountSerializer(serializers.ModelSerializer):
+class IngredientAmountSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
     measurement_unit = serializers.ReadOnlyField(
@@ -44,22 +44,13 @@ class IngredientReadAmountSerializer(serializers.ModelSerializer):
         ]
 
 
-class IngredientWriteAmountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IngredientAmount
-        fields = [
-            "ingredient",
-            "amount",
-        ]
-
-
 class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(
         many=True,
-        required=False,
+        read_only=True,
     )
     author = CustomUserSerializer(required=False)
-    ingredients = IngredientReadAmountSerializer(
+    ingredients = IngredientAmountSerializer(
         many=True,
         required=False,
     )
@@ -89,7 +80,29 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return False
 
 
+class IngredientWriteAmountSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(
+        source="ingredient.id",
+        read_only=True,
+    )
+
+    class Meta:
+        model = IngredientAmount
+        fields = [
+            "id",
+            "amount",
+        ]
+        # extra_kwargs = {
+        #     "id": {"read_only": False},
+        #     "amount": {"read_only": False},
+        # }
+
+
 class RecipeWriteSerializer(serializers.ModelSerializer):
+    ingredients = IngredientWriteAmountSerializer(
+        many=True,
+        required=True,
+    )
     author = CustomUserSerializer(required=False)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -101,7 +114,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             "id",
             "tags",
             "author",
-            # "ingredients",
+            "ingredients",
             "is_favorited",
             "is_in_shopping_cart",
             "name",
@@ -111,10 +124,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # breakpoint()
         tags_data = validated_data.pop("tags")
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags_data)
+        ingredients_data = self.initial_data.get("ingredients")
+        breakpoint()
         return recipe
 
     def get_is_favorited(self, obj):
