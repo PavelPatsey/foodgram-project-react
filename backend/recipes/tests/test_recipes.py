@@ -81,14 +81,14 @@ class RecipeTest(TestCase):
 
     @unittest.expectedFailure
     def test_get_recipes_list_unauthorized_user(self):
-        """Получение списка ингредиентов.
+        """Получение списка рецептов.
         неавторизованным пользователем"""
         url = "/api/recipes/"
         response = self.guest_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_recipes_list_authorized_client(self):
-        """Получение списка ингредиентов.
+        """Получение списка рецептов.
         авторизованным пользователем."""
         url = "/api/recipes/"
         response = self.authorized_client.get(url)
@@ -138,5 +138,51 @@ class RecipeTest(TestCase):
                     "cooking_time": 4,
                 }
             ],
+        }
+        self.assertEqual(response.json(), test_json)
+
+    def test_get_recipes_detail_authorized_client(self):
+        """Получение рецепта авторизованным пользователем."""
+        url = f"/api/recipes/{self.user.id}/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_json = {
+            "id": 1,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "test Завтрак",
+                    "color": "#6AA84FFF",
+                    "slug": "breakfast",
+                }
+            ],
+            "author": {
+                "email": "",
+                "id": 1,
+                "username": "authorized_user",
+                "first_name": "",
+                "last_name": "",
+                "is_subscribed": False,
+            },
+            "ingredients": [
+                {
+                    "id": 1,
+                    "name": "test апельсин",
+                    "measurement_unit": "шт.",
+                    "amount": 5,
+                },
+                {
+                    "id": 2,
+                    "name": "test варенье",
+                    "measurement_unit": "ложка",
+                    "amount": 1,
+                },
+            ],
+            "is_favorited": False,
+            "is_in_shopping_cart": False,
+            "name": "test рецепт",
+            "image": "http://testserver/media/media/recipes/images/small.gif",
+            "text": "описание тестового рецепта",
+            "cooking_time": 4,
         }
         self.assertEqual(response.json(), test_json)
