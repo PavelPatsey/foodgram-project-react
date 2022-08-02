@@ -93,7 +93,6 @@ class RecipeTest(TestCase):
         url = "/api/recipes/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # breakpoint()
         test_json = {
             "count": 1,
             "next": None,

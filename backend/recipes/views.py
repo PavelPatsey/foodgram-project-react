@@ -16,6 +16,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by("id")
     serializer_class = RecipeSerializer
     pagination_class = RecipePagination
