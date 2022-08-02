@@ -197,8 +197,8 @@ class RecipeTest(TestCase):
     #     url = "/api/recipes/"
     #     data = {
     #         "ingredients": [{"id": self.ingredient_1.id, "amount": 10}],
-    #         # "tags": [self.tag.id, self.tag_2.id],
-    #         "tags": [1, 2],
+    #         "tags": [self.tag.id, self.tag_2.id],
+    #         # "tags": [1, 2],
     #         "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
     #         "name": "Тестовый рецепт обеда",
     #         "text": "Описание тестового рецепта обеда",
@@ -206,5 +206,6 @@ class RecipeTest(TestCase):
     #     }
     #     response = self.authorized_client.post(url, data)
     #     from pprint import pprint
+
     #     pprint(response.json())
     #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
