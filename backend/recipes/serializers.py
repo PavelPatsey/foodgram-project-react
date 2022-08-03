@@ -85,7 +85,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 class IngredientAmountWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all(),
+        source='ingredient',
+        queryset=Ingredient.objects.all()
     )
 
     class Meta:
@@ -120,9 +121,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        breakpoint()
+        # breakpoint()
         tags_data = validated_data.pop("tags")
+        ingredients_data = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags_data)
-        ingredients_data = self.initial_data.get("ingredients")
+        recipe.ingredients.set(ingredients_data)
         return recipe

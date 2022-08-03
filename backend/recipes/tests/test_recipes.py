@@ -204,7 +204,7 @@ class RecipeTest(TestCase):
             "cooking_time": 30,
         }
         response = self.authorized_client.post(url, data)
-        breakpoint()
+        # breakpoint()
         from pprint import pprint
 
         pprint(response.json())
