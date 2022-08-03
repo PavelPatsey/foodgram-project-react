@@ -3,12 +3,8 @@ from rest_framework.permissions import SAFE_METHODS
 
 from .models import Ingredient, Recipe, Tag
 from .pagination import RecipePagination
-from .serializers import (
-    IngredientSerializer,
-    RecipeReadSerializer,
-    RecipeWriteSerializer,
-    TagSerializer,
-)
+from .serializers import (IngredientSerializer, RecipeReadSerializer,
+                          RecipeWriteSerializer, TagSerializer)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):

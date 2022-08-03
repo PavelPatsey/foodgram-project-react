@@ -203,9 +203,23 @@ class RecipeTest(TestCase):
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
         }
-        response = self.authorized_client.post(url, data)
-        # breakpoint()
-        from pprint import pprint
-
-        pprint(response.json())
+        response = self.authorized_client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # breakpoint()
+        test_json = {
+            "ingredients": [{"id": 1, "amount": 10}],
+            "tags": [1, 2],
+            "author": {
+                "email": "",
+                "id": 1,
+                "username": "authorized_user",
+                "first_name": "",
+                "last_name": "",
+                "is_subscribed": False,
+            },
+            "image": "http://testserver/media/media/recipes/images/1285f403-dcc8-4565-960d-c64d56e7abc0.png",
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": 30,
+        }
+        self.assertEqual(response.json(), test_json)

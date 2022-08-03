@@ -1,4 +1,3 @@
-from asyncore import write
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -85,8 +84,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 class IngredientAmountWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredient',
-        queryset=Ingredient.objects.all()
+        source="ingredient", queryset=Ingredient.objects.all()
     )
 
     class Meta:
@@ -121,10 +119,19 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # breakpoint()
         tags_data = validated_data.pop("tags")
         ingredients_data = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags_data)
-        recipe.ingredients.set(ingredients_data)
+
+        ingredient_amounts = []
+        for item in ingredients_data:
+            ingredient = item.get("ingredient")
+            amount = item.get("amount")
+            ingredient_amount, _ = IngredientAmount.objects.get_or_create(
+                ingredient=ingredient,
+                amount=amount,
+            )
+            ingredient_amounts.append(ingredient_amount)
+        recipe.ingredients.set(ingredient_amounts)
         return recipe
