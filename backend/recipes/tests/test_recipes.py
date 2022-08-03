@@ -196,7 +196,7 @@ class RecipeTest(TestCase):
         """Создание рецепта авторизованным пользователем."""
         url = "/api/recipes/"
         data = {
-            # "ingredients": [{"id": self.ingredient_1.id, "amount": 10}],
+            "ingredients": [{"id": self.ingredient_1.id, "amount": 10}],
             "tags": [self.tag.id, self.tag_2.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",

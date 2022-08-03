@@ -1,3 +1,4 @@
+from asyncore import write
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -80,11 +81,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return False
 
 
-class IngredientWriteAmountSerializer(serializers.ModelSerializer):
-    # id = serializers.PrimaryKeyRelatedField(
-    #     source="ingredient.id",
-    #     read_only=True,
-    # )
+class IngredientAmountWriteSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all(),
+    )
 
     class Meta:
         model = IngredientAmount
@@ -92,14 +92,12 @@ class IngredientWriteAmountSerializer(serializers.ModelSerializer):
             "id",
             "amount",
         ]
-        extra_kwargs = {
-            "id": {"read_only": False},
-            "amount": {"read_only": False},
-        }
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    # ingredients = IngredientWriteAmountSerializer(many=True)
+    ingredients = IngredientAmountWriteSerializer(
+        many=True,
+    )
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Tag.objects.all(),
@@ -110,19 +108,19 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = [
-            # "ingredients",
+            "ingredients",
             "tags",
             "author",
-            "name",
             "image",
+            "name",
             "text",
             "cooking_time",
         ]
 
     def create(self, validated_data):
+        breakpoint()
         tags_data = validated_data.pop("tags")
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags_data)
         ingredients_data = self.initial_data.get("ingredients")
-        breakpoint()
         return recipe
