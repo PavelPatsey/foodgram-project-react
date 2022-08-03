@@ -81,10 +81,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class IngredientWriteAmountSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        source="ingredient.id",
-        read_only=True,
-    )
+    # id = serializers.PrimaryKeyRelatedField(
+    #     source="ingredient.id",
+    #     read_only=True,
+    # )
 
     class Meta:
         model = IngredientAmount
@@ -92,31 +92,27 @@ class IngredientWriteAmountSerializer(serializers.ModelSerializer):
             "id",
             "amount",
         ]
-        # extra_kwargs = {
-        #     "id": {"read_only": False},
-        #     "amount": {"read_only": False},
-        # }
+        extra_kwargs = {
+            "id": {"read_only": False},
+            "amount": {"read_only": False},
+        }
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    ingredients = IngredientWriteAmountSerializer(
+    # ingredients = IngredientWriteAmountSerializer(many=True)
+    tags = serializers.PrimaryKeyRelatedField(
         many=True,
-        required=True,
+        queryset=Tag.objects.all(),
     )
     author = CustomUserSerializer(required=False)
-    is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = [
-            "id",
+            # "ingredients",
             "tags",
             "author",
-            "ingredients",
-            "is_favorited",
-            "is_in_shopping_cart",
             "name",
             "image",
             "text",
@@ -130,9 +126,3 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients_data = self.initial_data.get("ingredients")
         breakpoint()
         return recipe
-
-    def get_is_favorited(self, obj):
-        return False
-
-    def get_is_in_shopping_cart(self, obj):
-        return False
