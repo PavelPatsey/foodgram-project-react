@@ -196,7 +196,10 @@ class RecipeTest(TestCase):
         """Создание рецепта авторизованным пользователем."""
         url = "/api/recipes/"
         data = {
-            "ingredients": [{"id": self.ingredient_1.id, "amount": 10}],
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
             "tags": [self.tag.id, self.tag_2.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
@@ -205,10 +208,25 @@ class RecipeTest(TestCase):
         }
         response = self.authorized_client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # breakpoint()
+        image = response.json().get("image")
+        test_string = "http://testserver/media/media/recipes/images/"
+        self.assertTrue(test_string in image)
         test_json = {
-            "ingredients": [{"id": 1, "amount": 10}],
-            "tags": [1, 2],
+            "id": 2,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "test Завтрак",
+                    "color": "#6AA84FFF",
+                    "slug": "breakfast",
+                },
+                {
+                    "id": 2,
+                    "name": "test Обед",
+                    "color": "#6AA84FFF",
+                    "slug": "dinner",
+                },
+            ],
             "author": {
                 "email": "",
                 "id": 1,
@@ -217,9 +235,33 @@ class RecipeTest(TestCase):
                 "last_name": "",
                 "is_subscribed": False,
             },
-            "image": "http://testserver/media/media/recipes/images/1285f403-dcc8-4565-960d-c64d56e7abc0.png",
+            "ingredients": [
+                {
+                    "id": 3,
+                    "name": "test апельсин",
+                    "measurement_unit": "шт.",
+                    "amount": 10,
+                },
+                {
+                    "id": 4,
+                    "name": "test варенье",
+                    "measurement_unit": "ложка",
+                    "amount": 30,
+                },
+            ],
+            "is_favorited": False,
+            "is_in_shopping_cart": False,
             "name": "Тестовый рецепт обеда",
+            "image": image,
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
         }
         self.assertEqual(response.json(), test_json)
+
+    def test_get_recipe_detail_400(self):
+        """ошибка добавления в избранное."""
+        pass
+
+    def test_get_recipe_detail_401(self):
+        """401 пользователь не авторизован."""
+        pass
