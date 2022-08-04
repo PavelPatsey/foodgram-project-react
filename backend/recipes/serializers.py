@@ -141,6 +141,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients_data = validated_data.pop("ingredients")
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        instance.save()
 
         instance.tags.set(tags_data)
         ingredient_amounts = []
