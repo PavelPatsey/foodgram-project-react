@@ -195,6 +195,7 @@ class RecipeTest(TestCase):
     def test_create_recipe_authorized_client(self):
         """Создание рецепта авторизованным пользователем."""
         url = "/api/recipes/"
+        recipe_count = Recipe.objects.count()
         data = {
             "ingredients": [
                 {"id": self.ingredient_1.id, "amount": 10},
@@ -208,6 +209,7 @@ class RecipeTest(TestCase):
         }
         response = self.authorized_client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Recipe.objects.count(), recipe_count + 1)
         image = response.json().get("image")
         test_string = "http://testserver/media/media/recipes/images/"
         self.assertTrue(test_string in image)
