@@ -260,6 +260,150 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_create_recipe_without_ingredients(self):
+        """Создание рецепта.
+        Игредиенты обязательное поле."""
+        url = "/api/recipes/"
+        data = {
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": 30,
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"ingredients": ["Обязательное поле."]}
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_without_tags(self):
+        """Создание рецепта.
+        Теги обязательное поле."""
+        url = "/api/recipes/"
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": 30,
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"tags": ["Обязательное поле."]}
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_without_image(self):
+        """Создание рецепта без рисунка."""
+        url = "/api/recipes/"
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": 30,
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"image": ["Ни одного файла не было отправлено."]}
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_without_name(self):
+        """Создание рецепта.
+        Название рецепта обязательное поле."""
+        url = "/api/recipes/"
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": 30,
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"name": ["Обязательное поле."]}
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_without_text(self):
+        """Создание рецепта.
+        Описание рецепта обязательное поле."""
+        url = "/api/recipes/"
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "Тестовый рецепт обеда",
+            "cooking_time": 30,
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"text": ["Обязательное поле."]}
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_without_cooking_time(self):
+        """Создание рецепта.
+        Время готовки обязательное поле."""
+        url = "/api/recipes/"
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"cooking_time": ["Обязательное поле."]}
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_without_ingredients_tags(self):
+        """Создание рецепта.
+        Теги и игредиенты обязательные поля."""
+        url = "/api/recipes/"
+        data = {
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": 30,
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {
+            "ingredients": ["Обязательное поле."],
+            "tags": ["Обязательное поле."],
+        }
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_with_empty_data(self):
+        """Создание рецепта обязательные поля."""
+        url = "/api/recipes/"
+        data = {}
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {
+            "ingredients": ["Обязательное поле."],
+            "tags": ["Обязательное поле."],
+            "image": ["Ни одного файла не было отправлено."],
+            "name": ["Обязательное поле."],
+            "text": ["Обязательное поле."],
+            "cooking_time": ["Обязательное поле."],
+        }
+        self.assertEqual(response.json(), test_json)
+
     def test_get_recipe_detail_400(self):
         """ошибка добавления в избранное."""
         pass
