@@ -404,6 +404,27 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_create_recipe_negative_cooking_time(self):
+        """Создание рецепта авторизованным пользователем.
+        с отрицательным временем готовки"""
+        url = "/api/recipes/"
+        recipe_count = Recipe.objects.count()
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": -1,
+        }
+        response = self.authorized_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json ={'cooking_time': ['Убедитесь, что это значение больше либо равно 1.']}
+        self.assertEqual(response.json(), test_json)
+    
     def test_get_recipe_detail_400(self):
         """ошибка добавления в избранное."""
         pass
