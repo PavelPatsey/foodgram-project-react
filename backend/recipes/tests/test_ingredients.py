@@ -95,6 +95,6 @@ class IngredientTest(TestCase):
         ingridient_count = Ingredient.objects.count()
         url = f"/api/ingredients/{ingridient_count + 1}/"
         response = self.authorized_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
         self.assertEqual(response.json(), test_json)
