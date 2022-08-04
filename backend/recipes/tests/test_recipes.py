@@ -211,7 +211,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Recipe.objects.count(), recipe_count + 1)
         image = response.json().get("image")
-        test_string = "http://testserver/media/media/recipes/images/"
+        test_string = "http://testserver/media/recipes/images/"
         self.assertTrue(test_string in image)
         test_json = {
             "id": 2,
@@ -433,3 +433,79 @@ class RecipeTest(TestCase):
     def test_get_recipe_detail_401(self):
         """401 пользователь не авторизован."""
         pass
+
+    def test_patch_recipe_authorized_client(self):
+        """Обновление рецепта авторизованным пользователем."""
+        recipe = Recipe.objects.create(
+            author=self.user,
+            name="тестовый рецепт",
+            image=self.uploaded,
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "обновленный тестовый рецепт",
+            "text": "обновленное описание тестового рецепта",
+            "cooking_time": 21,
+        }
+        url = f"/api/recipes/{recipe.id}/"
+        response = self.authorized_client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        image = response.json().get("image")
+        test_string = "http://testserver/media/media/recipes/images/"
+        breakpoint()
+        self.assertTrue(test_string in image)
+        test_json = {
+            "id": 1,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "test Завтрак",
+                    "color": "#6AA84FFF",
+                    "slug": "breakfast",
+                },
+                {
+                    "id": 2,
+                    "name": "test Обед",
+                    "color": "#6AA84FFF",
+                    "slug": "dinner",
+                },
+            ],
+            "author": {
+                "email": "",
+                "id": 1,
+                "username": "authorized_user",
+                "first_name": "",
+                "last_name": "",
+                "is_subscribed": False,
+            },
+            "ingredients": [
+                {
+                    "id": 3,
+                    "name": "test апельсин",
+                    "measurement_unit": "шт.",
+                    "amount": 10,
+                },
+                {
+                    "id": 4,
+                    "name": "test варенье",
+                    "measurement_unit": "ложка",
+                    "amount": 21,
+                },
+            ],
+            "is_favorited": False,
+            "is_in_shopping_cart": False,
+            "name": "обновленный тестовый рецеп",
+            "image": image,
+            "text": "обновленное описание тестового рецепта",
+            "cooking_time": 30,
+        }
+        self.assertEqual(response.json(), test_json)

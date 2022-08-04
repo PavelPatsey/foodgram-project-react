@@ -133,3 +133,24 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             ingredient_amounts.append(ingredient_amount)
         recipe.ingredients.set(ingredient_amounts)
         return recipe
+
+    def update(self, instance, validated_data):
+        instance.ingredients.clear()
+        instance.tags.clear()
+        tags_data = validated_data.pop("tags")
+        ingredients_data = validated_data.pop("ingredients")
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.tags.set(tags_data)
+        ingredient_amounts = []
+        for item in ingredients_data:
+            ingredient = item.get("ingredient")
+            amount = item.get("amount")
+            ingredient_amount, _ = IngredientAmount.objects.get_or_create(
+                ingredient=ingredient,
+                amount=amount,
+            )
+            ingredient_amounts.append(ingredient_amount)
+        instance.ingredients.set(ingredient_amounts)
+        return instance
