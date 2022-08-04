@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -83,9 +84,7 @@ class Recipe(models.Model):
         verbose_name="Картинка",
     )
     text = models.TextField(verbose_name="Описание")
-    cooking_time = models.IntegerField(
-        verbose_name="Время приготовления (в минутах)",
-    )
+    cooking_time = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
     def __str__(self):
         return f"{self.author}, {self.name}"
