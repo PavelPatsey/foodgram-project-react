@@ -408,7 +408,6 @@ class RecipeTest(TestCase):
         """Создание рецепта авторизованным пользователем.
         с отрицательным временем готовки"""
         url = "/api/recipes/"
-        recipe_count = Recipe.objects.count()
         data = {
             "ingredients": [
                 {"id": self.ingredient_1.id, "amount": 10},
@@ -422,9 +421,11 @@ class RecipeTest(TestCase):
         }
         response = self.authorized_client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        test_json ={'cooking_time': ['Убедитесь, что это значение больше либо равно 1.']}
+        test_json = {
+            "cooking_time": ["Убедитесь, что это значение больше либо равно 1."]
+        }
         self.assertEqual(response.json(), test_json)
-    
+
     def test_get_recipe_detail_400(self):
         """ошибка добавления в избранное."""
         pass
