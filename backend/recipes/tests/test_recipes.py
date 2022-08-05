@@ -618,9 +618,36 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
-    def test_patch_recipe_400(self):
-        """ошибки валидации."""
-        pass
+    def test_patch_recipe_400_negative_cookin_time(self):
+        """Обновление рецепта. Ошибка валидации.
+        Не валидное время готовки."""
+        recipe = Recipe.objects.create(
+            author=self.user,
+            name="тестовый рецепт",
+            image=self.uploaded_1,
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "обновленный тестовый рецепт",
+            "text": "обновленное описание тестового рецепта",
+            "cooking_time": 0,
+        }
+        url = f"/api/recipes/{recipe.id}/"
+        response = self.authorized_client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {
+            "cooking_time": ["Убедитесь, что это значение больше либо равно 1."]
+        }
+        self.assertEqual(response.json(), test_json)
 
     def test_patch_recipe_401(self):
         """Обновление рецепта. Пользователь не авторизован."""
