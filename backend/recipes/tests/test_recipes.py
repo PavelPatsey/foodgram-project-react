@@ -20,7 +20,7 @@ class RecipeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.guest_client = APIClient()
-        
+
         cls.user = User.objects.create_user(username="authorized_user")
         cls.authorized_client = APIClient()
         cls.authorized_client.force_authenticate(cls.user)
@@ -28,7 +28,7 @@ class RecipeTest(TestCase):
         cls.admin_user = User.objects.create_superuser(username="admin_user")
         cls.admin_client = APIClient()
         cls.admin_client.force_authenticate(cls.admin_user)
-        
+
         cls.ingredient_1 = Ingredient.objects.create(
             name="test апельсин",
             measurement_unit="шт.",
@@ -643,6 +643,36 @@ class RecipeTest(TestCase):
         response = self.guest_client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
+
+    def test_patch_recipe_not_author(self):
+        """Обновление чужого рецепта."""
+        recipe = Recipe.objects.create(
+            author=self.admin_user,
+            name="тестовый рецепт",
+            image=self.uploaded_1,
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "обновленный тестовый рецепт",
+            "text": "обновленное описание тестового рецепта",
+            "cooking_time": 21,
+        }
+        url = f"/api/recipes/{recipe.id}/"
+        response = self.authorized_client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        test_json = {
+            "detail": "У вас недостаточно прав для выполнения данного действия."
+        }
         self.assertEqual(response.json(), test_json)
 
     def test_patch_recipe_404(self):

@@ -5,7 +5,8 @@ from rest_framework.response import Response
 
 from .models import Ingredient, Recipe, Tag
 from .pagination import RecipePagination
-from .permissions import IsAuthorOrReadOnly
+from .permissions import (IsAuthor, IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
+                          IsAuthorOrReadOnly)
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, TagSerializer)
 
@@ -23,8 +24,14 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by("id")
     pagination_class = RecipePagination
+    # permission_classes = [
+    #     IsAuthorOrReadOnly or IsAdminUser or IsAuthenticatedOrReadOnly
+    # ]
+    # permission_classes = [
+    #     (IsAuthor or IsAdminUser) and IsAuthenticatedOrReadOnly
+    # ]
     permission_classes = [
-        (IsAuthorOrReadOnly or IsAdminUser) and IsAuthenticatedOrReadOnly
+        IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
     ]
 
     def get_serializer_class(self):
@@ -52,6 +59,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
         serializer = self.get_serializer(
             data=request.data,
@@ -60,6 +68,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(
             instance=instance,
             data=request.data,
+            partial=partial,
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
