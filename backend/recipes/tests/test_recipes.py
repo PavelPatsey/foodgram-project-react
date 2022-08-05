@@ -675,6 +675,81 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_patch_recipe_by_administrator(self):
+        """Обновление чужого рецепта администратором"""
+        recipe = Recipe.objects.create(
+            author=self.user,
+            name="тестовый рецепт",
+            image=self.uploaded_1,
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "обновленный тестовый рецепт",
+            "text": "обновленное описание тестового рецепта",
+            "cooking_time": 21,
+        }
+        url = f"/api/recipes/{recipe.id}/"
+        response = self.admin_client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        image = response.json().get("image")
+        test_string = "http://testserver/media/recipes/images/"
+        self.assertTrue(test_string in image)
+        test_json = {
+            "id": 2,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "test Завтрак",
+                    "color": "#6AA84FFF",
+                    "slug": "breakfast",
+                },
+                {
+                    "id": 2,
+                    "name": "test Обед",
+                    "color": "#6AA84FFF",
+                    "slug": "dinner",
+                },
+            ],
+            "author": {
+                "email": "",
+                "id": 2,
+                "username": "admin_user",
+                "first_name": "",
+                "last_name": "",
+                "is_subscribed": False,
+            },
+            "ingredients": [
+                {
+                    "id": 3,
+                    "name": "test апельсин",
+                    "measurement_unit": "шт.",
+                    "amount": 10,
+                },
+                {
+                    "id": 4,
+                    "name": "test варенье",
+                    "measurement_unit": "ложка",
+                    "amount": 30,
+                },
+            ],
+            "is_favorited": False,
+            "is_in_shopping_cart": False,
+            "name": "обновленный тестовый рецепт",
+            "image": image,
+            "text": "обновленное описание тестового рецепта",
+            "cooking_time": 21,
+        }
+        self.assertEqual(response.json(), test_json)
+
     def test_patch_recipe_404(self):
         """Обновление рецепта. Страница не найдена."""
         recipe = Recipe.objects.create(
