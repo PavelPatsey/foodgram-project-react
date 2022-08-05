@@ -102,6 +102,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Tag.objects.all(),
+        required=True,
     )
     image = Base64ImageField()
 

@@ -586,10 +586,36 @@ class RecipeTest(TestCase):
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 21,
         }
-        url = f"/api/recipes/{recipe.id} + 1/"
+        url = f"/api/recipes/{recipe.id + 1}/"
         response = self.authorized_client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
+        self.assertEqual(response.json(), test_json)
+
+    def test_patch_recipe_400_without_fields(self):
+        """Обновление рецепта.
+        Не указаны обязательные поля."""
+        recipe = Recipe.objects.create(
+            author=self.user,
+            name="тестовый рецепт",
+            image=self.uploaded_1,
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        data = {}
+        url = f"/api/recipes/{recipe.id}/"
+        response = self.authorized_client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {
+            "ingredients": ["Обязательное поле."],
+            "tags": ["Обязательное поле."],
+            "image": ["Ни одного файла не было отправлено."],
+            "name": ["Обязательное поле."],
+            "text": ["Обязательное поле."],
+            "cooking_time": ["Обязательное поле."],
+        }
         self.assertEqual(response.json(), test_json)
 
     def test_patch_recipe_400(self):
