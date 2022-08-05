@@ -545,14 +545,6 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
-    def test_get_recipe_detail_400(self):
-        """ошибка добавления в избранное."""
-        pass
-
-    def test_get_recipe_detail_401(self):
-        """401 пользователь не авторизован."""
-        pass
-
     def test_patch_recipe_authorized_client(self):
         """Обновление рецепта авторизованным пользователем."""
         recipe = Recipe.objects.create(
@@ -626,6 +618,25 @@ class RecipeTest(TestCase):
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 21,
         }
+        self.assertEqual(response.json(), test_json)
+
+    def test_get_recipe_detail_unauthorized_client_401(self):
+        """Обновление рецепта неавторизованным пользователем."""
+        url = f"/api/recipes/{self.recipe.id}/"
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "обновленный тестовый рецепт",
+            "text": "обновленное описание тестового рецепта",
+            "cooking_time": 21,
+        }
+        response = self.guest_client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
 
     def test_patch_recipe_404(self):
