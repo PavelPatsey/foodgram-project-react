@@ -20,9 +20,15 @@ class RecipeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.guest_client = APIClient()
+        
         cls.user = User.objects.create_user(username="authorized_user")
         cls.authorized_client = APIClient()
         cls.authorized_client.force_authenticate(cls.user)
+
+        cls.admin_user = User.objects.create_superuser(username="admin_user")
+        cls.admin_client = APIClient()
+        cls.admin_client.force_authenticate(cls.admin_user)
+        
         cls.ingredient_1 = Ingredient.objects.create(
             name="test апельсин",
             measurement_unit="шт.",
@@ -620,7 +626,7 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
-    def test_get_recipe_detail_unauthorized_client_401(self):
+    def test_patch_recipe_unauthorized_client_401(self):
         """Обновление рецепта неавторизованным пользователем."""
         url = f"/api/recipes/{self.recipe.id}/"
         data = {
