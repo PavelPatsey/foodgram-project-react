@@ -1,6 +1,5 @@
 import shutil
 import tempfile
-import unittest
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -837,7 +836,15 @@ class RecipeTest(TestCase):
 
     def test_delete_recipe(self):
         """Удаление рецепта."""
-        url = f"/api/recipes/{self.recipe.id}/"
+        recipe = Recipe.objects.create(
+            author=self.user,
+            name="тестовый рецепт",
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        url = f"/api/recipes/{recipe.id}/"
         response = self.authorized_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -853,7 +860,22 @@ class RecipeTest(TestCase):
         response = self.guest_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_delete_recipe_403(self):
-        """Удаление рецепта.Недостаточно прав."""
-        pass
+    def test_delete_recipe_not_author_403(self):
+        """Удаление чужого рецепта."""
+        user = User.objects.create(username="test_user_recipe")
+        recipe = Recipe.objects.create(
+            author=user,
+            name="тестовый рецепт",
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        url = f"/api/recipes/{recipe.id}/"
+        response = self.authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        test_json = {
+            "detail": "У вас недостаточно прав для выполнения данного действия."
+        }
+        self.assertEqual(response.json(), test_json)
 
