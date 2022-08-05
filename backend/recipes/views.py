@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .models import Ingredient, Recipe, Tag
 from .pagination import RecipePagination
-from .permissions import IsAuthorOrAdminOrReadOnly, IsAuthorOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, TagSerializer)
 
@@ -24,7 +24,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by("id")
     pagination_class = RecipePagination
     permission_classes = [
-        IsAuthorOrReadOnly or IsAdminUser or IsAuthenticatedOrReadOnly
+        (IsAuthorOrReadOnly or IsAdminUser) and IsAuthenticatedOrReadOnly
     ]
 
     def get_serializer_class(self):

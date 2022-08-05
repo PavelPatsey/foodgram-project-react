@@ -306,10 +306,9 @@ class RecipeTest(TestCase):
             "cooking_time": 30,
         }
         response = self.guest_client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(Recipe.objects.count(), recipe_count)
-        breakpoint()
-        test_json = {}
+        test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_authorized_client(self):
