@@ -879,3 +879,17 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_delete_recipe_by_administrator(self):
+        """Удаление чужого рецепта администратором."""
+        user = User.objects.create(username="test_user_recipe")
+        recipe = Recipe.objects.create(
+            author=user,
+            name="тестовый рецепт",
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        url = f"/api/recipes/{recipe.id}/"
+        response = self.admin_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
