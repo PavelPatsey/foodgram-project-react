@@ -97,17 +97,14 @@ class RecipeTest(TestCase):
         """cool test"""
         self.assertEqual(True, True)
 
-    @unittest.expectedFailure
     def test_get_recipes_list_unauthorized_user(self):
-        """Получение списка рецептов.
-        неавторизованным пользователем"""
+        """Получение списка рецептов неавторизованным пользователем"""
         url = "/api/recipes/"
         response = self.guest_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_recipes_list_authorized_client(self):
-        """Получение списка рецептов.
-        авторизованным пользователем."""
+        """Получение списка рецептов авторизованным пользователем."""
         url = "/api/recipes/"
         recipe = Recipe.objects.create(
             author=self.user,
@@ -201,6 +198,52 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_get_recipe_detail_unauthorized_client(self):
+        """Получение рецепта неавторизованным пользователем."""
+        url = f"/api/recipes/{self.user.id}/"
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_json = {
+            "id": 1,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "test Завтрак",
+                    "color": "#6AA84FFF",
+                    "slug": "breakfast",
+                }
+            ],
+            "author": {
+                "email": "",
+                "id": 1,
+                "username": "authorized_user",
+                "first_name": "",
+                "last_name": "",
+                "is_subscribed": False,
+            },
+            "ingredients": [
+                {
+                    "id": 1,
+                    "name": "test апельсин",
+                    "measurement_unit": "шт.",
+                    "amount": 5,
+                },
+                {
+                    "id": 2,
+                    "name": "test варенье",
+                    "measurement_unit": "ложка",
+                    "amount": 1,
+                },
+            ],
+            "is_favorited": False,
+            "is_in_shopping_cart": False,
+            "name": "test рецепт",
+            "image": "http://testserver/media/recipes/images/small.gif",
+            "text": "описание тестового рецепта",
+            "cooking_time": 4,
+        }
+        self.assertEqual(response.json(), test_json)
+
     def test_get_recipe_detail_authorized_client(self):
         """Получение рецепта авторизованным пользователем."""
         url = f"/api/recipes/{self.user.id}/"
@@ -245,6 +288,28 @@ class RecipeTest(TestCase):
             "text": "описание тестового рецепта",
             "cooking_time": 4,
         }
+        self.assertEqual(response.json(), test_json)
+
+    def test_create_recipe_unauthorized_client(self):
+        """Создание рецепта неавторизованным пользователем."""
+        url = "/api/recipes/"
+        recipe_count = Recipe.objects.count()
+        data = {
+            "ingredients": [
+                {"id": self.ingredient_1.id, "amount": 10},
+                {"id": self.ingredient_2.id, "amount": 30},
+            ],
+            "tags": [self.tag.id, self.tag_2.id],
+            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "name": "Тестовый рецепт обеда",
+            "text": "Описание тестового рецепта обеда",
+            "cooking_time": 30,
+        }
+        response = self.guest_client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Recipe.objects.count(), recipe_count)
+        breakpoint()
+        test_json = {}
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_authorized_client(self):

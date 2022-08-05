@@ -84,7 +84,9 @@ class Recipe(models.Model):
         verbose_name="Картинка",
     )
     text = models.TextField(verbose_name="Описание")
-    cooking_time = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    cooking_time = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)],
+    )
 
     def __str__(self):
         return f"{self.author}, {self.name}"
