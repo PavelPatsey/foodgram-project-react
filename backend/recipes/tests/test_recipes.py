@@ -835,14 +835,6 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
-    def test_patch_recipe_401(self):
-        """Обновление рецепта. Пользователь не авторизован."""
-        pass
-
-    def test_patch_recipe_403(self):
-        """Обновление рецепта. недостаточно прав."""
-        pass
-
     def test_delete_recipe(self):
         """Удаление рецепта."""
         url = f"/api/recipes/{self.recipe.id}/"
@@ -855,10 +847,13 @@ class RecipeTest(TestCase):
         response = self.authorized_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_recipe_401(self):
-        """Удаление рецепта.Учетные данные не были предоставлены."""
-        pass
+    def test_delete_recipe_unauthorized_client_401(self):
+        """Удаление рецепта неавторизованным пользователем."""
+        url = f"/api/recipes/{self.recipe.id}/"
+        response = self.guest_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_delete_recipe_403(self):
         """Удаление рецепта.Недостаточно прав."""
         pass
+
