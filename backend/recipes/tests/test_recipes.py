@@ -656,3 +656,23 @@ class RecipeTest(TestCase):
     def test_patch_recipe_403(self):
         """Обновление рецепта. недостаточно прав."""
         pass
+
+    def test_delete_recipe(self):
+        """Удаление рецепта."""
+        url = f"/api/recipes/{self.recipe.id}/"
+        response = self.authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_recipe_404(self):
+        """Удаление рецепта.Страница не найдена."""
+        url = f"/api/recipes/{self.recipe.id + 1}/"
+        response = self.authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_recipe_401(self):
+        """Удаление рецепта.Учетные данные не были предоставлены."""
+        pass
+
+    def test_delete_recipe_403(self):
+        """Удаление рецепта.Недостаточно прав."""
+        pass
