@@ -1085,6 +1085,14 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_add_recipe_to_favorites_guest_client(self):
+        """Нельзя добавить рецепт в избранное неавторизованным пользователем."""
+        url = f"/api/recipes/{self.recipe.id}/favorite/"
+        response = self.guest_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
+
     def test_add_recipe_to_favorites_authorized_client_400(self):
         """Нельзя повторно добавить рецепт в избранное авторизованным пользователем."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
