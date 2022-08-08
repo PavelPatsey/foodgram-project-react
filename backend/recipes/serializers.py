@@ -88,6 +88,19 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return False
 
 
+class FavoriteRecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(max_length=None, use_url=True,)
+
+    class Meta:
+        model = Recipe
+        fields = [
+            "id",
+            "name",
+            "image",
+            "cooking_time",
+        ]
+
+
 class IngredientAmountWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         source="ingredient", queryset=Ingredient.objects.all()
