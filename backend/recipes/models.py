@@ -112,6 +112,6 @@ class Favorite(models.Model):
         verbose_name = "Избранное"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique favorite recipe for user"
+                fields=["user", "recipe"], name="unique_user_favorite_recipe"
             )
         ]
