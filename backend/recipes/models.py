@@ -93,3 +93,25 @@ class Recipe(models.Model):
 
     def __str__(self):
         return f"{self.author}, {self.name}"
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+    )
+    recipe = models.ManyToManyField(
+        Recipe,
+        verbose_name="Рецепт",
+        related_name="favorites",
+    )
+
+    class Meta:
+        ordering = ["-id"]
+        verbose_name = "Избранное"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique favorite recipe for user"
+            )
+        ]
