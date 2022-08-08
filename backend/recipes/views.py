@@ -95,7 +95,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=user,
                 recipe=recipe,
             )
-            serializer = FavoriteRecipeSerializer(recipe, context={"request": request},)
+            serializer = FavoriteRecipeSerializer(
+                recipe,
+                context={"request": request},
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == "DELETE":
             user = request.user

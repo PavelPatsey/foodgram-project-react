@@ -6,12 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recipes', '0012_alter_recipe_options_alter_recipe_cooking_time_and_more'),
+        ("recipes", "0012_alter_recipe_options_alter_recipe_cooking_time_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='favorite',
-            options={'ordering': ['-id'], 'verbose_name': 'Избранный рецепт', 'verbose_name_plural': 'Избранные рецепты'},
+            name="favorite",
+            options={
+                "ordering": ["-id"],
+                "verbose_name": "Избранный рецепт",
+                "verbose_name_plural": "Избранные рецепты",
+            },
         ),
     ]

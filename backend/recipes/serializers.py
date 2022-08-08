@@ -89,7 +89,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
-    image = Base64ImageField(max_length=None, use_url=True,)
+    image = Base64ImageField(
+        max_length=None,
+        use_url=True,
+    )
 
     class Meta:
         model = Recipe
