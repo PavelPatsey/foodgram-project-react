@@ -1120,3 +1120,15 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
+
+    def test_delete_recipe_to_favorites_authorized_client_400(self):
+        """Нельзя повторно удалить рецепт из избранного авторизованным пользователем."""
+        url = f"/api/recipes/{self.recipe.id}/favorite/"
+        response = self.authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = self.authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"errors": "Рецепт уже удален из избранного"}
+        self.assertEqual(response.json(), test_json)
