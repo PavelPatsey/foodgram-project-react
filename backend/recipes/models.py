@@ -88,5 +88,8 @@ class Recipe(models.Model):
         validators=[MinValueValidator(1)],
     )
 
+    class Meta:
+        ordering = ["-id"]
+
     def __str__(self):
         return f"{self.author}, {self.name}"

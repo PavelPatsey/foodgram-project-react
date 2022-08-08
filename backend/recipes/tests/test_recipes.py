@@ -128,6 +128,39 @@ class RecipeTest(TestCase):
             "previous": None,
             "results": [
                 {
+                    "id": 2,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        }
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [
+                        {
+                            "id": 1,
+                            "name": "test апельсин",
+                            "measurement_unit": "шт.",
+                            "amount": 5,
+                        }
+                    ],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "тестовый рецепт",
+                    "image": "http://testserver/media/recipes/images/small_1.gif",
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+                {
                     "id": 1,
                     "tags": [
                         {
@@ -163,39 +196,6 @@ class RecipeTest(TestCase):
                     "is_in_shopping_cart": False,
                     "name": "test рецепт",
                     "image": "http://testserver/media/recipes/images/small.gif",
-                    "text": "описание тестового рецепта",
-                    "cooking_time": 4,
-                },
-                {
-                    "id": 2,
-                    "tags": [
-                        {
-                            "id": 1,
-                            "name": "test Завтрак",
-                            "color": "#6AA84FFF",
-                            "slug": "breakfast",
-                        }
-                    ],
-                    "author": {
-                        "email": "",
-                        "id": 1,
-                        "username": "authorized_user",
-                        "first_name": "",
-                        "last_name": "",
-                        "is_subscribed": False,
-                    },
-                    "ingredients": [
-                        {
-                            "id": 1,
-                            "name": "test апельсин",
-                            "measurement_unit": "шт.",
-                            "amount": 5,
-                        }
-                    ],
-                    "is_favorited": False,
-                    "is_in_shopping_cart": False,
-                    "name": "тестовый рецепт",
-                    "image": "http://testserver/media/recipes/images/small_1.gif",
                     "text": "описание тестового рецепта",
                     "cooking_time": 4,
                 },
