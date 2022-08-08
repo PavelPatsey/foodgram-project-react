@@ -110,9 +110,13 @@ class Favorite(models.Model):
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Избранное"
+        verbose_name = "Избранный рецепт"
+        verbose_name_plural = "Избранные рецепты"
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "recipe"], name="unique_user_favorite_recipe"
             )
         ]
+
+    def __str__(self):
+        return f"{self.user} добавил рецепт {self.recipe}"
