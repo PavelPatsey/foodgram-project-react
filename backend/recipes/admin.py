@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Ingredient, IngredientAmount, Recipe, Tag
+from .models import Ingredient, IngredientAmount, Recipe, Tag, Favorite
 
 
 @admin.register(Tag)
@@ -30,3 +30,8 @@ class IngredientAmountAdmin(admin.ModelAdmin):
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_filter = ("name", "author", "tags")
+
+
+@admin.register(Favorite)
+class FavoriteAmountAdmin(admin.ModelAdmin):
+    pass
