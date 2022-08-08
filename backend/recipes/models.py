@@ -101,10 +101,11 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Пользователь",
     )
-    recipe = models.ManyToManyField(
+    recipe = models.ForeignKey(
         Recipe,
-        verbose_name="Рецепт",
+        on_delete=models.CASCADE,
         related_name="favorites",
+        verbose_name="Рецепт",
     )
 
     class Meta:
