@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from users.serializers import CustomUserSerializer
 
-from .models import Ingredient, IngredientAmount, Recipe, Tag
+from .models import Favorite, Ingredient, IngredientAmount, Recipe, Tag
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -76,6 +76,12 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         ]
 
     def get_is_favorited(self, obj):
+        user = self.context["request"].user
+        if user.is_authenticated:
+            return Favorite.objects.filter(
+                user=user,
+                recipe=obj,
+            ).exists()
         return False
 
     def get_is_in_shopping_cart(self, obj):
