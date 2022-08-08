@@ -1069,3 +1069,28 @@ class RecipeTest(TestCase):
             ],
         }
         self.assertEqual(response.json(), test_json)
+
+    def test_add_recipe_to_favorites_authorized_client(self):
+        """Добавить рецепт в избранное авторизованным пользователем."""
+        count = Favorite.objects.count()
+        url = f"/api/recipes/{self.recipe.id}/favorite/"
+        response = self.authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Favorite.objects.count(), count + 1)
+        test_json = {
+            "id": 1,
+            "name": "test рецепт",
+            "image": "http://testserver/media/recipes/images/small.gif",
+            "cooking_time": 4,
+        }
+        self.assertEqual(response.json(), test_json)
+
+    def test_add_recipe_to_favorites_authorized_client_400(self):
+        """Нельзя повторно добавить рецепт в избранное авторизованным пользователем."""
+        url = f"/api/recipes/{self.recipe.id}/favorite/"
+        response = self.authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"errors": "Рецепт уже добавлен в избранное"}
+        self.assertEqual(response.json(), test_json)
