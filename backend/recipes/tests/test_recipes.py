@@ -895,11 +895,12 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_recipe_detail_get_is_favorited(self):
-        """ПРоверка метода get_is_favorited."""
-        favorite = Favorite.objects.create(user=self.user, recipe=self.recipe)
+        """Проверка метода get_is_favorited."""
+        Favorite.objects.create(user=self.user, recipe=self.recipe)
         url = f"/api/recipes/{self.recipe.id}/"
-        response = self.authorized_client.delete(url)
+        response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.json().get("is_favorited"))
         test_json = {
             "id": 1,
             "tags": [
