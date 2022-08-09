@@ -1183,7 +1183,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_recipe_detail_get_is_in_shopping_cart_guest_client(self):
-        """Проверка метода is_in_shopping_cart неавторизованным пользователем."""
+        """Проверка метода get_is_in_shopping_cart неавторизованным пользователем."""
         ShoppingCart.objects.create(user=self.user, recipe=self.recipe)
         url = f"/api/recipes/{self.recipe.id}/"
         response = self.guest_client.get(url)
@@ -1230,85 +1230,85 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
-    # def test_recipe_list_get_is_favorited_authorized_client(self):
-    #     """Проверка метода get_is_favorited при get запросе списка
-    #     рецептов авторизованным пользователем."""
-    #     Favorite.objects.create(user=self.user, recipe=self.recipe)
-    #     Recipe.objects.create(
-    #         author=self.user,
-    #         name="тестовый рецепт",
-    #         text="описание тестового рецепта",
-    #         cooking_time=4,
-    #     )
-    #     url = "/api/recipes/"
-    #     response = self.authorized_client.get(url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     test_json = {
-    #         "count": 2,
-    #         "next": None,
-    #         "previous": None,
-    #         "results": [
-    #             {
-    #                 "id": 2,
-    #                 "tags": [],
-    #                 "author": {
-    #                     "email": "",
-    #                     "id": 1,
-    #                     "username": "authorized_user",
-    #                     "first_name": "",
-    #                     "last_name": "",
-    #                     "is_subscribed": False,
-    #                 },
-    #                 "ingredients": [],
-    #                 "is_favorited": False,
-    #                 "is_in_shopping_cart": False,
-    #                 "name": "тестовый рецепт",
-    #                 "image": None,
-    #                 "text": "описание тестового рецепта",
-    #                 "cooking_time": 4,
-    #             },
-    #             {
-    #                 "id": 1,
-    #                 "tags": [
-    #                     {
-    #                         "id": 1,
-    #                         "name": "test Завтрак",
-    #                         "color": "#6AA84FFF",
-    #                         "slug": "breakfast",
-    #                     }
-    #                 ],
-    #                 "author": {
-    #                     "email": "",
-    #                     "id": 1,
-    #                     "username": "authorized_user",
-    #                     "first_name": "",
-    #                     "last_name": "",
-    #                     "is_subscribed": False,
-    #                 },
-    #                 "ingredients": [
-    #                     {
-    #                         "id": 1,
-    #                         "name": "test апельсин",
-    #                         "measurement_unit": "шт.",
-    #                         "amount": 5,
-    #                     },
-    #                     {
-    #                         "id": 2,
-    #                         "name": "test варенье",
-    #                         "measurement_unit": "ложка",
-    #                         "amount": 1,
-    #                     },
-    #                 ],
-    #                 "is_favorited": True,
-    #                 "is_in_shopping_cart": False,
-    #                 "name": "test рецепт",
-    #                 "image": "http://testserver/media/recipes/images/small.gif",
-    #                 "text": "описание тестового рецепта",
-    #                 "cooking_time": 4,
-    #             },
-    #         ],
-    #     }
-    #     self.assertEqual(response.json(), test_json)
+    def test_recipe_list_get_is_in_shopping_cart_authorized_client(self):
+        """Проверка метода get_is_in_shopping_cart при get запросе списка
+        рецептов авторизованным пользователем."""
+        ShoppingCart.objects.create(user=self.user, recipe=self.recipe)
+        Recipe.objects.create(
+            author=self.user,
+            name="тестовый рецепт",
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        url = "/api/recipes/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_json = {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 2,
+                    "tags": [],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "тестовый рецепт",
+                    "image": None,
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+                {
+                    "id": 1,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        }
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [
+                        {
+                            "id": 1,
+                            "name": "test апельсин",
+                            "measurement_unit": "шт.",
+                            "amount": 5,
+                        },
+                        {
+                            "id": 2,
+                            "name": "test варенье",
+                            "measurement_unit": "ложка",
+                            "amount": 1,
+                        },
+                    ],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": True,
+                    "name": "test рецепт",
+                    "image": "http://testserver/media/recipes/images/small.gif",
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+            ],
+        }
+        self.assertEqual(response.json(), test_json)
 
     # def test_add_recipe_to_favorites_authorized_client(self):
     #     """Добавить рецепт в избранное авторизованным пользователем."""
