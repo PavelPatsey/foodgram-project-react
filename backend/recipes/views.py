@@ -4,13 +4,13 @@ from rest_framework.permissions import (SAFE_METHODS, IsAdminUser,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from .models import Favorite, Ingredient, Recipe, Tag
+from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import RecipePagination
 from .permissions import (IsAuthor, IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly)
-from .serializers import (FavoriteRecipeSerializer, IngredientSerializer,
-                          RecipeReadSerializer, RecipeWriteSerializer,
-                          TagSerializer)
+from .serializers import (FavoriteShoppingCartRecipeSerializer,
+                          IngredientSerializer, RecipeReadSerializer,
+                          RecipeWriteSerializer, TagSerializer)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -95,7 +95,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=user,
                 recipe=recipe,
             )
-            serializer = FavoriteRecipeSerializer(
+            serializer = FavoriteShoppingCartRecipeSerializer(
                 recipe,
                 context={"request": request},
             )
@@ -111,4 +111,37 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 favorite.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             data = {"errors": "Рецепт уже удален из избранного"}
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["post", "delete"])
+    def shopping_cart(self, request, pk=None):
+        if request.method == "POST":
+            user = request.user
+            recipe = self.get_object()
+            if ShoppingCart.objects.filter(
+                user=user,
+                recipe=recipe,
+            ).exists():
+                data = {"errors": "Рецепт уже добавлен в корзину"}
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            ShoppingCart.objects.create(
+                user=user,
+                recipe=recipe,
+            )
+            serializer = FavoriteShoppingCartRecipeSerializer(
+                recipe,
+                context={"request": request},
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if request.method == "DELETE":
+            user = request.user
+            recipe = self.get_object()
+            favorite = ShoppingCart.objects.filter(
+                user=user,
+                recipe=recipe,
+            )
+            if favorite.exists():
+                favorite.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            data = {"errors": "Рецепт уже удален из корзины"}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)

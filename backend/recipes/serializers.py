@@ -88,7 +88,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return False
 
 
-class FavoriteRecipeSerializer(serializers.ModelSerializer):
+class FavoriteShoppingCartRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(
         max_length=None,
         use_url=True,
