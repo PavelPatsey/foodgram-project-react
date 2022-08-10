@@ -446,3 +446,21 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         test_json = {"errors": "Нельзя подписаться на самого себя"}
         self.assertEqual(response.json(), test_json)
+
+    def test_subscribe_user_twice(self):
+        """Нельзя подписаться на пользователя, на которого вы уже подписаны."""
+        test_user = User.objects.create_user(username="test_username")
+        authorized_client = APIClient()
+        authorized_client.force_authenticate(test_user)
+        count = Subscription.objects.count()
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Subscription.objects.count(), count + 1)
+        response = authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"errors": "Вы уже подписаны на данного пользователя"}
+        self.assertEqual(response.json(), test_json)
+
+    def test_subscribe_guest_client(self):
+        """Неавторизованный пользователь не может подписываться."""
