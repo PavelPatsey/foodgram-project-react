@@ -1,7 +1,7 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from .models import Subscription, User
+from .models import User
 
 
 class CustomUserSerializer(UserSerializer):
@@ -20,7 +20,12 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context["request"].user
-        return user.is_authenticated and user.subscribers.filter(author=obj).exists()
+        return (
+            user.is_authenticated
+            and user.subscribers.filter(
+                author=obj,
+            ).exists()
+        )
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -41,7 +46,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         }
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
+class UserSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
