@@ -23,6 +23,12 @@ class Subscription(models.Model):
             "user",
             "author",
         )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"],
+                name="unique_user_author_subscription",
+            )
+        ]
 
     def __str__(self):
         return f"{self.user}_to_{self.author}"
