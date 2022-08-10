@@ -538,5 +538,31 @@ class UsersViewsTest(TestCase):
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         breakpoint()
-        test_json = {}
+        test_json = {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "email": "",
+                    "id": 2,
+                    "username": "test_author_1",
+                    "first_name": "",
+                    "last_name": "",
+                    "is_subscribed": True,
+                    "recipes": [],
+                    "recipes_count": 0,
+                },
+                {
+                    "email": "",
+                    "id": 3,
+                    "username": "test_author_2",
+                    "first_name": "",
+                    "last_name": "",
+                    "is_subscribed": True,
+                    "recipes": [],
+                    "recipes_count": 0,
+                },
+            ],
+        }
         self.assertEqual(response.json(), test_json)

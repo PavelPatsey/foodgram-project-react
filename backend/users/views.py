@@ -56,7 +56,6 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=False,
         permission_classes=[IsAuthenticated],
-        pagination_class=UsersPagination,
     )
     def subscriptions(self, request):
         user = request.user
@@ -67,4 +66,4 @@ class CustomUserViewSet(UserViewSet):
             many=True,
             context={"request": request},
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
