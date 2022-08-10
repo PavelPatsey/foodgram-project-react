@@ -368,9 +368,14 @@ class UsersViewsTest(TestCase):
         count = Subscription.objects.count()
         test_user = User.objects.create_user(username="test_username")
         url = f"/api/users/{test_user.id}/subscribe/"
-        # breakpoint()
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Subscription.objects.count(), count + 1)
-        test_json = {}
+        test_json = {
+            "email": "",
+            "id": 2,
+            "username": "test_username",
+            "first_name": "",
+            "last_name": "",
+        }
         self.assertEqual(response.json(), test_json)

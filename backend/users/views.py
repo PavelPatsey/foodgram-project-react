@@ -18,10 +18,9 @@ class CustomUserViewSet(UserViewSet):
         methods=["post", "delete"],
         permission_classes=[IsAuthenticated],
     )
-    def subscribe(self, request, pk=None):
+    def subscribe(self, request, id=None):
         if request.method == "POST":
             user = request.user
-            breakpoint()
             author = self.get_object()
             if user == author:
                 data = {"errors": "Нельзя подписаться на самого себя"}
@@ -41,15 +40,15 @@ class CustomUserViewSet(UserViewSet):
                 context={"request": request},
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if request.method == "DELETE":
-            user = request.user
-            author = self.get_object()
-            subscription = Subscription.objects.filter(
-                user=user,
-                author=author,
-            )
-            if subscription.exists():
-                subscription.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            data = {"errors": "Вы не подписаны на данного пользователя"}
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        # if request.method == "DELETE":
+        #     user = request.user
+        #     author = self.get_object()
+        #     subscription = Subscription.objects.filter(
+        #         user=user,
+        #         author=author,
+        #     )
+        #     if subscription.exists():
+        #         subscription.delete()
+        #         return Response(status=status.HTTP_204_NO_CONTENT)
+        #     data = {"errors": "Вы не подписаны на данного пользователя"}
+        #     return Response(data, status=status.HTTP_400_BAD_REQUEST)
