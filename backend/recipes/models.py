@@ -70,6 +70,7 @@ class Recipe(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name="Автор рецепта",
+        related_name="recipes",
     )
     ingredients = models.ManyToManyField(
         IngredientAmount,
