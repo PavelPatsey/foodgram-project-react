@@ -537,7 +537,6 @@ class UsersViewsTest(TestCase):
         url = "/api/users/subscriptions/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        breakpoint()
         test_json = {
             "count": 2,
             "next": None,
@@ -565,4 +564,12 @@ class UsersViewsTest(TestCase):
                 },
             ],
         }
+        self.assertEqual(response.json(), test_json)
+
+    def test_subscriptions_authentication_credentials_were_not_provided(self):
+        """Мои подписки. Учетные данные не были предоставлены."""
+        url = "/api/users/subscriptions/"
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
