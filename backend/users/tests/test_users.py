@@ -4,6 +4,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from recipes.models import Ingredient, IngredientAmount, Recipe, Tag
 from users.models import Subscription, User
 
 
@@ -11,9 +12,59 @@ class UsersViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.guest_client = APIClient()
+
         cls.user = User.objects.create_user(username="authorized_user")
         cls.authorized_client = APIClient()
         cls.authorized_client.force_authenticate(cls.user)
+
+        cls.ingredient_1 = Ingredient.objects.create(
+            name="test апельсин",
+            measurement_unit="шт.",
+        )
+        cls.ingredient_2 = Ingredient.objects.create(
+            name="test варенье",
+            measurement_unit="ложка",
+        )
+        cls.tag = Tag.objects.create(
+            name="test Завтрак",
+            color="#6AA84FFF",
+            slug="breakfast",
+        )
+        cls.tag_2 = Tag.objects.create(
+            name="test Обед",
+            color="#6AA84FFF",
+            slug="dinner",
+        )
+        cls.ingredientamount_1 = IngredientAmount.objects.create(
+            ingredient=cls.ingredient_1,
+            amount=5,
+        )
+        cls.ingredientamount_2 = IngredientAmount.objects.create(
+            ingredient=cls.ingredient_2,
+            amount=1,
+        )
+        cls.recipe = Recipe.objects.create(
+            author=cls.user,
+            name="test рецепт",
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        cls.recipe.tags.add(cls.tag)
+        cls.recipe.ingredients.add(
+            cls.ingredientamount_1,
+            cls.ingredientamount_2,
+        )
+        cls.recipe_2 = Recipe.objects.create(
+            author=cls.user,
+            name="test рецепт 2",
+            text="описание тестового рецепта 2",
+            cooking_time=10,
+        )
+        cls.recipe_2.tags.add(cls.tag)
+        cls.recipe_2.ingredients.add(
+            cls.ingredientamount_1,
+            cls.ingredientamount_2,
+        )
 
     def test_cool_test(self):
         """cool test"""
@@ -365,18 +416,26 @@ class UsersViewsTest(TestCase):
 
     def test_add_recipe_to_shopping_cart_authorized_client(self):
         """Подписаться авторизованным пользователем."""
-        count = Subscription.objects.count()
         test_user = User.objects.create_user(username="test_username")
-        url = f"/api/users/{test_user.id}/subscribe/"
-        response = self.authorized_client.post(url)
+        authorized_client = APIClient()
+        authorized_client.force_authenticate(test_user)
+        count = Subscription.objects.count()
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Subscription.objects.count(), count + 1)
+        # breakpoint()
         test_json = {
             "email": "",
-            "id": 2,
-            "username": "test_username",
+            "id": 1,
+            "username": "authorized_user",
             "first_name": "",
             "last_name": "",
             "is_subscribed": True,
+            "recipes": [
+                {"id": 2, "name": "test рецепт 2", "image": None, "cooking_time": 10},
+                {"id": 1, "name": "test рецепт", "image": None, "cooking_time": 4},
+            ],
+            "recipes_count": 2,
         }
         self.assertEqual(response.json(), test_json)

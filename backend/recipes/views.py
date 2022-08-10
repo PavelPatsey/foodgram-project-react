@@ -8,9 +8,9 @@ from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import RecipePagination
 from .permissions import (IsAuthor, IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly)
-from .serializers import (ShortRecipeSerializer,
-                          IngredientSerializer, RecipeReadSerializer,
-                          RecipeWriteSerializer, TagSerializer)
+from .serializers import (IngredientSerializer, RecipeReadSerializer,
+                          RecipeWriteSerializer, ShortRecipeSerializer,
+                          TagSerializer)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
