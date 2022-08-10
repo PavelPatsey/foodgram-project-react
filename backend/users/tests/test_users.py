@@ -478,3 +478,52 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
         self.assertEqual(response.json(), test_json)
+
+    def test_unsubscribe_authorized_client(self):
+        """Отписаться авторизованным пользователем."""
+        test_user = User.objects.create_user(username="test_username")
+        authorized_client = APIClient()
+        authorized_client.force_authenticate(test_user)
+        count = Subscription.objects.count()
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Subscription.objects.count(), count + 1)
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_unsubscribe_from_user_you_are_not_subscribing(self):
+        """Нельзя отписаться от пользователя, на которого вы не подписаны."""
+        test_user = User.objects.create_user(username="test_username")
+        authorized_client = APIClient()
+        authorized_client.force_authenticate(test_user)
+        count = Subscription.objects.count()
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Subscription.objects.count(), count + 1)
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"errors": "Вы не подписаны на данного пользователя"}
+        self.assertEqual(response.json(), test_json)
+
+    def test_unsubscribe_guest_client(self):
+        """Неавторизованный пользователь не может отписываться."""
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = self.guest_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
+
+    def test_unsubscribe_404(self):
+        """Нельзя отписаться от несущесвующего пользователя."""
+        count = Subscription.objects.count()
+        url = f"/api/users/{count + 2}/subscribe/"
+        response = self.authorized_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        test_json = {"detail": "Страница не найдена."}
+        self.assertEqual(response.json(), test_json)
