@@ -47,6 +47,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class UserSubscriptionSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -55,7 +57,16 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
-            # "is_subscribed",
+            "is_subscribed",
             # "recipes",
             # "recipes_count",
         ]
+
+    def get_is_subscribed(self, obj):
+        user = self.context["request"].user
+        return (
+            user.is_authenticated
+            and user.subscribers.filter(
+                author=obj,
+            ).exists()
+        )

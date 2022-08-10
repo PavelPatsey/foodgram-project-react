@@ -377,5 +377,6 @@ class UsersViewsTest(TestCase):
             "username": "test_username",
             "first_name": "",
             "last_name": "",
+            "is_subscribed": True,
         }
         self.assertEqual(response.json(), test_json)
