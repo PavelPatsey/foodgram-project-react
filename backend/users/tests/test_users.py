@@ -414,7 +414,7 @@ class UsersViewsTest(TestCase):
         test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
 
-    def test_add_recipe_to_shopping_cart_authorized_client(self):
+    def test_subscribe_authorized_client(self):
         """Подписаться авторизованным пользователем."""
         test_user = User.objects.create_user(username="test_username")
         authorized_client = APIClient()
@@ -424,7 +424,6 @@ class UsersViewsTest(TestCase):
         response = authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Subscription.objects.count(), count + 1)
-        # breakpoint()
         test_json = {
             "email": "",
             "id": 1,
