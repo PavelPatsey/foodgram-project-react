@@ -469,3 +469,12 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         test_json = {"detail": "Учетные данные не были предоставлены."}
         self.assertEqual(response.json(), test_json)
+
+    def test_subscribe_404(self):
+        """Нельзя подписаться на несущесвующего пользователя."""
+        count = Subscription.objects.count()
+        url = f"/api/users/{count + 2}/subscribe/"
+        response = self.authorized_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        test_json = {"detail": "Страница не найдена."}
+        self.assertEqual(response.json(), test_json)
