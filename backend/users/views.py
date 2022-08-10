@@ -52,3 +52,19 @@ class CustomUserViewSet(UserViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             data = {"errors": "Вы не подписаны на данного пользователя"}
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=False,
+        permission_classes=[IsAuthenticated],
+        pagination_class=UsersPagination,
+    )
+    def subscriptions(self, request):
+        user = request.user
+        subscribed_authors = User.objects.filter(subscribed_authors__user=user)
+        pages = self.paginate_queryset(subscribed_authors)
+        serializer = UserSubscriptionSerializer(
+            pages,
+            many=True,
+            context={"request": request},
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)

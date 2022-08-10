@@ -527,3 +527,16 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
         self.assertEqual(response.json(), test_json)
+
+    def test_subscriptions(self):
+        """Возвращает пользователей, на которых подписан текущий пользователь."""
+        test_author_1 = User.objects.create(username="test_author_1")
+        test_author_2 = User.objects.create(username="test_author_2")
+        Subscription.objects.create(user=self.user, author=test_author_1)
+        Subscription.objects.create(user=self.user, author=test_author_2)
+        url = "/api/users/subscriptions/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        breakpoint()
+        test_json = {}
+        self.assertEqual(response.json(), test_json)
