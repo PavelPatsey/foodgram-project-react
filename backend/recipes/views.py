@@ -8,7 +8,7 @@ from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import RecipePagination
 from .permissions import (IsAuthor, IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly)
-from .serializers import (FavoriteShoppingCartRecipeSerializer,
+from .serializers import (ShortRecipeSerializer,
                           IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, TagSerializer)
 
@@ -95,7 +95,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=user,
                 recipe=recipe,
             )
-            serializer = FavoriteShoppingCartRecipeSerializer(
+            serializer = ShortRecipeSerializer(
                 recipe,
                 context={"request": request},
             )
@@ -128,7 +128,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=user,
                 recipe=recipe,
             )
-            serializer = FavoriteShoppingCartRecipeSerializer(
+            serializer = ShortRecipeSerializer(
                 recipe,
                 context={"request": request},
             )
