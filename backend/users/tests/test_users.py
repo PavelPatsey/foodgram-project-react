@@ -464,3 +464,8 @@ class UsersViewsTest(TestCase):
 
     def test_subscribe_guest_client(self):
         """Неавторизованный пользователь не может подписываться."""
+        url = f"/api/users/{self.user.id}/subscribe/"
+        response = self.guest_client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
