@@ -69,8 +69,7 @@ class UsersViewsTest(TestCase):
         self.assertEqual(True, True)
 
     def test_get_users_list_unauthorized_user(self):
-        """Получение списка всех пользователей.
-        неавторизованным пользователем"""
+        """Получение списка всех пользователей неавторизованным пользователем"""
         url = "/api/users/"
         User.objects.create_user(username="testusername")
         response = self.guest_client.get(url)
@@ -92,6 +91,7 @@ class UsersViewsTest(TestCase):
         )
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # breakpoint()
         test_json = {
             "count": 3,
             "next": None,
