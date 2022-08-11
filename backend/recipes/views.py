@@ -1,9 +1,10 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
+# from .filters import RecipeFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import RecipePagination
 from .permissions import IsAuthorOrAdminOrIsAuthenticatedOrReadOnly
@@ -29,10 +30,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
     ]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = (
-        "author",
-        "tags",
-    )
+    # filter_class = RecipeFilter
+    filterset_fields = ('author',)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
