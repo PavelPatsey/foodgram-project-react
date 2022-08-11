@@ -61,7 +61,7 @@ class CustomUserViewSet(UserViewSet):
         user = request.user
         subscribed_authors = User.objects.filter(
             subscribed_authors__user=user
-        ).order_by("username")
+        ).order_by("subscribed_authors")
         pages = self.paginate_queryset(subscribed_authors)
         serializer = UserSubscriptionSerializer(
             pages,

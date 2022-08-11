@@ -527,22 +527,63 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_subscriptions(self):
-        """Возвращает пользователей, на которых подписан текущий пользователь."""
+        """Возвращает пользователей, на которых подписан текущий пользователь.
+        сортировка от новых к старым подпискам"""
+        test_author_6 = User.objects.create(username="test_author_6")
+        test_author_7 = User.objects.create(username="test_author_7")
+        test_author_5 = User.objects.create(username="test_author_5")
         test_author_1 = User.objects.create(username="test_author_1")
+        test_author_3 = User.objects.create(username="test_author_3")
+        test_author_4 = User.objects.create(username="test_author_4")
         test_author_2 = User.objects.create(username="test_author_2")
-        Subscription.objects.create(user=self.user, author=test_author_1)
+        Subscription.objects.create(user=self.user, author=test_author_6)
+        Subscription.objects.create(user=self.user, author=test_author_4)
         Subscription.objects.create(user=self.user, author=test_author_2)
+        Subscription.objects.create(user=self.user, author=test_author_1)
+        Subscription.objects.create(user=self.user, author=test_author_3)
+        Subscription.objects.create(user=self.user, author=test_author_5)
+        Subscription.objects.create(user=self.user, author=test_author_7)
         url = "/api/users/subscriptions/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
-            "count": 2,
-            "next": None,
+            "count": 7,
+            "next": "http://testserver/api/users/subscriptions/?page=2",
             "previous": None,
             "results": [
                 {
                     "email": "",
-                    "id": 2,
+                    "id": 3,
+                    "username": "test_author_7",
+                    "first_name": "",
+                    "last_name": "",
+                    "is_subscribed": True,
+                    "recipes": [],
+                    "recipes_count": 0,
+                },
+                {
+                    "email": "",
+                    "id": 4,
+                    "username": "test_author_5",
+                    "first_name": "",
+                    "last_name": "",
+                    "is_subscribed": True,
+                    "recipes": [],
+                    "recipes_count": 0,
+                },
+                {
+                    "email": "",
+                    "id": 6,
+                    "username": "test_author_3",
+                    "first_name": "",
+                    "last_name": "",
+                    "is_subscribed": True,
+                    "recipes": [],
+                    "recipes_count": 0,
+                },
+                {
+                    "email": "",
+                    "id": 5,
                     "username": "test_author_1",
                     "first_name": "",
                     "last_name": "",
@@ -552,8 +593,18 @@ class UsersViewsTest(TestCase):
                 },
                 {
                     "email": "",
-                    "id": 3,
+                    "id": 8,
                     "username": "test_author_2",
+                    "first_name": "",
+                    "last_name": "",
+                    "is_subscribed": True,
+                    "recipes": [],
+                    "recipes_count": 0,
+                },
+                {
+                    "email": "",
+                    "id": 7,
+                    "username": "test_author_4",
                     "first_name": "",
                     "last_name": "",
                     "is_subscribed": True,
