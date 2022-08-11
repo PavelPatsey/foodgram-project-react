@@ -1,18 +1,13 @@
 from django.db import IntegrityError
 from django.test import TestCase
-from rest_framework import status
-from rest_framework.test import APIClient
 
-from users.models import Subscription, User
+from ..models import Subscription, User
 
 
 class UsersViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.guest_client = APIClient()
-        cls.user = User.objects.create_user(username="authorized_user")
-        cls.authorized_client = APIClient()
-        cls.authorized_client.force_authenticate(cls.user)
+        pass
 
     def test_cool_test(self):
         """Cool test."""
