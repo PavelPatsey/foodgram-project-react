@@ -78,25 +78,6 @@ class UsersViewsTest(TestCase):
         response = self.guest_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    @unittest.expectedFailure
-    def test_get_users_list_without_paginator(self):
-        """Получение списка всех пользователей.
-        Без паджинации."""
-        url = "/api/users/"
-        User.objects.create_user(username="testusername")
-        response = self.authorized_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        test_json = [
-            {
-                "email": "",
-                "id": 1,
-                "username": "authorized_user",
-                "first_name": "",
-                "last_name": "",
-            }
-        ]
-        self.assertEqual(response.json(), test_json)
-
     def test_get_users_list(self):
         """Получение списка всех пользователей авторизованным пользователем."""
         url = "/api/users/"
@@ -280,9 +261,9 @@ class UsersViewsTest(TestCase):
             "email": "",
             "id": user.id,
             "username": "authorized_user",
-            "is_subscribed": False,
             "first_name": "",
             "last_name": "",
+            "is_subscribed": False,
         }
         self.assertEqual(response.json(), test_json)
 
@@ -362,6 +343,23 @@ class UsersViewsTest(TestCase):
         response = client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         test_json = {"current_password": ["Неправильный пароль."]}
+        self.assertEqual(response.json(), test_json)
+
+    def test_set_password_no_new_password(self):
+        """Изменение пароля. Некорректный текущий пароль."""
+        url = "/api/users/set_password/"
+        user = User.objects.create_user(
+            username="test_user",
+            password="1wkfy267snsndndnd",
+        )
+        client = APIClient()
+        client.force_authenticate(user)
+        data = {
+            "current_password": "1wkfy267snsndndnd",
+        }
+        response = client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        test_json = {"new_password": ["Обязательное поле."]}
         self.assertEqual(response.json(), test_json)
 
     def test_set_password_401(self):
