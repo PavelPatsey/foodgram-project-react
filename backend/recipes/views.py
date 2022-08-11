@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (SAFE_METHODS, IsAdminUser,
@@ -35,6 +36,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
     ]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("author",)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:

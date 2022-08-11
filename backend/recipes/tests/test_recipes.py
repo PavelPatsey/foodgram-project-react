@@ -1372,3 +1372,98 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         test_json = {"errors": "Рецепт уже удален из корзины"}
         self.assertEqual(response.json(), test_json)
+
+    def test_get_recipes_filter_by_author(self):
+        """Рецептов фильтрация по автору."""
+        url = "/api/recipes/?color=Black"
+        recipe = Recipe.objects.create(
+            author=self.user,
+            name="тестовый рецепт",
+            image=self.uploaded_1,
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        recipe.ingredients.add(self.ingredientamount_1)
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_json = {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 2,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        }
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [
+                        {
+                            "id": 1,
+                            "name": "test апельсин",
+                            "measurement_unit": "шт.",
+                            "amount": 5,
+                        }
+                    ],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "тестовый рецепт",
+                    "image": "http://testserver/media/recipes/images/small_1.gif",
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+                {
+                    "id": 1,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        }
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [
+                        {
+                            "id": 1,
+                            "name": "test апельсин",
+                            "measurement_unit": "шт.",
+                            "amount": 5,
+                        },
+                        {
+                            "id": 2,
+                            "name": "test варенье",
+                            "measurement_unit": "ложка",
+                            "amount": 1,
+                        },
+                    ],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "test рецепт",
+                    "image": "http://testserver/media/recipes/images/small.gif",
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+            ],
+        }
+        self.assertEqual(response.json(), test_json)
