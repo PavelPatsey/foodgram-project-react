@@ -1,5 +1,3 @@
-import unittest
-
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -378,7 +376,9 @@ class UsersViewsTest(TestCase):
         """Получить токен авторизации."""
         url = "/api/auth/token/login/"
         User.objects.create_user(
-            username="test_user", password="1wkfy267snsndndnd", email="test@mail.ru"
+            username="test_user",
+            password="1wkfy267snsndndnd",
+            email="test@mail.ru",
         )
         data = {"password": "1wkfy267snsndndnd", "email": "test@mail.ru"}
         response = self.guest_client.post(url, data)
