@@ -536,13 +536,17 @@ class UsersViewsTest(TestCase):
         test_author_3 = User.objects.create(username="test_author_3")
         test_author_4 = User.objects.create(username="test_author_4")
         test_author_2 = User.objects.create(username="test_author_2")
-        Subscription.objects.create(user=self.user, author=test_author_6)
-        Subscription.objects.create(user=self.user, author=test_author_4)
-        Subscription.objects.create(user=self.user, author=test_author_2)
-        Subscription.objects.create(user=self.user, author=test_author_1)
-        Subscription.objects.create(user=self.user, author=test_author_3)
-        Subscription.objects.create(user=self.user, author=test_author_5)
-        Subscription.objects.create(user=self.user, author=test_author_7)
+        Subscription.objects.bulk_create(
+            [
+                Subscription(user=self.user, author=test_author_6),
+                Subscription(user=self.user, author=test_author_4),
+                Subscription(user=self.user, author=test_author_2),
+                Subscription(user=self.user, author=test_author_1),
+                Subscription(user=self.user, author=test_author_3),
+                Subscription(user=self.user, author=test_author_5),
+                Subscription(user=self.user, author=test_author_7),
+            ]
+        )
         url = "/api/users/subscriptions/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
