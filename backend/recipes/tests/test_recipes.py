@@ -1460,6 +1460,7 @@ class RecipeTest(TestCase):
         """Фильтрация рецептов по тегам."""
         test_user = User.objects.create(username="test_user")
         url = f"/api/recipes/?tags={self.tag.slug}"
+        
         recipe = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт тег 1",
@@ -1468,25 +1469,30 @@ class RecipeTest(TestCase):
             cooking_time=4,
         )
         recipe.tags.add(self.tag)
-        Recipe.objects.create(
+        
+        recipe = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт тег 2",
             image=None,
             text="описание тестового рецепта 2",
             cooking_time=4,
         )
-        response = self.authorized_client.get(url)
         recipe.tags.add(self.tag_2)
-        Recipe.objects.create(
+        
+        recipe = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт тег 1 и 2",
             image=None,
             text="описание тестового рецепта тег 1 и 2",
             cooking_time=4,
         )
-        response = self.authorized_client.get(url)
         recipe.tags.add(self.tag, self.tag_2)
+        
+        response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        from pprint import pprint
+        print()
+        pprint(response.json())
         breakpoint()
         test_json = {
             "count": 4,
