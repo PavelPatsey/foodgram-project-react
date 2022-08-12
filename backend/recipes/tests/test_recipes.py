@@ -1492,9 +1492,10 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         from pprint import pprint
 
-        print()
-        pprint(response.json())
-        # breakpoint()
+        # print()
+        # pprint(response.json())
+        breakpoint()
+        # неправльный json
         test_json = {
             "count": 4,
             "next": None,
@@ -1502,7 +1503,20 @@ class RecipeTest(TestCase):
             "results": [
                 {
                     "id": 4,
-                    "tags": [],
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        },
+                        {
+                            "id": 2,
+                            "name": "test Обед",
+                            "color": "#6AA84FFF",
+                            "slug": "dinner",
+                        },
+                    ],
                     "author": {
                         "email": "",
                         "id": 3,
@@ -1521,7 +1535,14 @@ class RecipeTest(TestCase):
                 },
                 {
                     "id": 3,
-                    "tags": [],
+                    "tags": [
+                        {
+                            "id": 2,
+                            "name": "test Обед",
+                            "color": "#6AA84FFF",
+                            "slug": "dinner",
+                        }
+                    ],
                     "author": {
                         "email": "",
                         "id": 3,
@@ -1546,13 +1567,7 @@ class RecipeTest(TestCase):
                             "name": "test Завтрак",
                             "color": "#6AA84FFF",
                             "slug": "breakfast",
-                        },
-                        {
-                            "id": 2,
-                            "name": "test Обед",
-                            "color": "#6AA84FFF",
-                            "slug": "dinner",
-                        },
+                        }
                     ],
                     "author": {
                         "email": "",
