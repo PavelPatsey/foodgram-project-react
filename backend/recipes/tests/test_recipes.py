@@ -1459,7 +1459,6 @@ class RecipeTest(TestCase):
     def test_get_recipes_filter_by_tags(self):
         """Фильтрация рецептов по тегам."""
         test_user = User.objects.create(username="test_user")
-        url = f"/api/recipes/?tags={self.tag.slug}"
 
         recipe = Recipe.objects.create(
             author=test_user,
@@ -1488,6 +1487,7 @@ class RecipeTest(TestCase):
         )
         recipe.tags.add(self.tag, self.tag_2)
 
+        url = f"/api/recipes/?tags={self.tag.slug}"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
