@@ -1702,3 +1702,11 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_text = b"jam (spoon) - 10 \ncucumber (spoon) - 3 \nketchup (spoon) - 2 \n"
         self.assertEqual(response.getvalue(), test_text)
+
+    def test_download_shopping_cart_unauthorized_user(self):
+        """Нельзя скачать список покупок анонимным пользователем."""
+        url = "/api/recipes/download_shopping_cart/"
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
