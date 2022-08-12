@@ -1455,3 +1455,154 @@ class RecipeTest(TestCase):
             ],
         }
         self.assertEqual(response.json(), test_json)
+
+    def test_get_recipes_filter_by_tags(self):
+        """Фильтрация рецептов по тегам."""
+        test_user = User.objects.create(username="test_user")
+        url = f"/api/recipes/?tags={self.tag.slug}"
+        recipe = Recipe.objects.create(
+            author=test_user,
+            name="тестовый рецепт тег 1",
+            image=None,
+            text="описание тестового рецепта 1",
+            cooking_time=4,
+        )
+        recipe.tags.add(self.tag)
+        Recipe.objects.create(
+            author=test_user,
+            name="тестовый рецепт тег 2",
+            image=None,
+            text="описание тестового рецепта 2",
+            cooking_time=4,
+        )
+        response = self.authorized_client.get(url)
+        recipe.tags.add(self.tag_2)
+        Recipe.objects.create(
+            author=test_user,
+            name="тестовый рецепт тег 1 и 2",
+            image=None,
+            text="описание тестового рецепта тег 1 и 2",
+            cooking_time=4,
+        )
+        response = self.authorized_client.get(url)
+        recipe.tags.add(self.tag, self.tag_2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        breakpoint()
+        test_json = {
+            "count": 4,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": 4,
+                    "tags": [],
+                    "author": {
+                        "email": "",
+                        "id": 3,
+                        "username": "test_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "тестовый рецепт тег 1 и 2",
+                    "image": None,
+                    "text": "описание тестового рецепта тег 1 и 2",
+                    "cooking_time": 4,
+                },
+                {
+                    "id": 3,
+                    "tags": [],
+                    "author": {
+                        "email": "",
+                        "id": 3,
+                        "username": "test_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "тестовый рецепт тег 2",
+                    "image": None,
+                    "text": "описание тестового рецепта 2",
+                    "cooking_time": 4,
+                },
+                {
+                    "id": 2,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        },
+                        {
+                            "id": 2,
+                            "name": "test Обед",
+                            "color": "#6AA84FFF",
+                            "slug": "dinner",
+                        },
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 3,
+                        "username": "test_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "тестовый рецепт тег 1",
+                    "image": None,
+                    "text": "описание тестового рецепта 1",
+                    "cooking_time": 4,
+                },
+                {
+                    "id": 1,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        }
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [
+                        {
+                            "id": 1,
+                            "name": "test апельсин",
+                            "measurement_unit": "шт.",
+                            "amount": 5,
+                        },
+                        {
+                            "id": 2,
+                            "name": "test варенье",
+                            "measurement_unit": "ложка",
+                            "amount": 1,
+                        },
+                    ],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": False,
+                    "name": "test рецепт",
+                    "image": "http://testserver/media/recipes/images/small.gif",
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+            ],
+        }
+        breakpoint()
+        self.assertEqual(response.json(), test_json)

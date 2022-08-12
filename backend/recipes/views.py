@@ -24,7 +24,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all().order_by("-id")
+    queryset = Recipe.objects.all()
     pagination_class = RecipePagination
     permission_classes = [
         IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
