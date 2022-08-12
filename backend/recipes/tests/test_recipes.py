@@ -1490,12 +1490,15 @@ class RecipeTest(TestCase):
 
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        from pprint import pprint
 
+        # from pprint import pprint
         # print()
         # pprint(response.json())
-        breakpoint()
-        # неправльный json
+
+        # breakpoint()
+
+        # неправильный json, должны быть рецепты
+        # только с тегами id = 1
         test_json = {
             "count": 4,
             "next": None,
