@@ -1376,7 +1376,7 @@ class RecipeTest(TestCase):
     def test_get_recipes_filter_by_author(self):
         """Фильтрация рецептов по автору."""
         test_user = User.objects.create(username="test_user")
-        url = f"/api/recipes/?author={test_user.id}/"
+        url = f"/api/recipes/?author={test_user.id}"
         recipe = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт 1",
@@ -1394,9 +1394,7 @@ class RecipeTest(TestCase):
             cooking_time=4,
         )
         response = self.authorized_client.get(url)
-        breakpoint()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
         test_json = {
             "count": 2,
             "next": None,

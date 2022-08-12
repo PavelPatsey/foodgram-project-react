@@ -6,8 +6,9 @@ from .models import Recipe
 
 
 class RecipeFilter(FilterSet):
-    author = filters.ModelChoiceFilter(queryset=User.objects.all())
+    # author = filters.ModelChoiceFilter(queryset=User.objects.all())
+    # tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
 
     class Meta:
         model = Recipe
-        fields = ["author"]
+        fields = ("tags",)
