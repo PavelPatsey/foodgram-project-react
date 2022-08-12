@@ -53,7 +53,8 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="shoppingcart",
             constraint=models.UniqueConstraint(
-                fields=("user", "recipe"), name="unique_user_recipe_in_shoppingcart"
+                fields=("user", "recipe"),
+                name="unique_user_recipe_in_shoppingcart",
             ),
         ),
     ]

@@ -246,7 +246,10 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json(),
-            {"first_name": ["Обязательное поле."], "last_name": ["Обязательное поле."]},
+            {
+                "first_name": ["Обязательное поле."],
+                "last_name": ["Обязательное поле."],
+            },
         )
 
     def test_user_profile(self):
@@ -430,8 +433,18 @@ class UsersViewsTest(TestCase):
             "last_name": "",
             "is_subscribed": True,
             "recipes": [
-                {"id": 2, "name": "test рецепт 2", "image": None, "cooking_time": 10},
-                {"id": 1, "name": "test рецепт", "image": None, "cooking_time": 4},
+                {
+                    "id": 2,
+                    "name": "test рецепт 2",
+                    "image": None,
+                    "cooking_time": 10,
+                },
+                {
+                    "id": 1,
+                    "name": "test рецепт",
+                    "image": None,
+                    "cooking_time": 4,
+                },
             ],
             "recipes_count": 2,
         }

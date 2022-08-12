@@ -75,6 +75,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         IngredientAmount,
         verbose_name="Список ингредиентов",
+        related_name="recipes",
     )
     name = models.CharField(
         max_length=200,
