@@ -33,7 +33,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     ]
     filter_backends = (DjangoFilterBackend,)
     filter_class = RecipeFilter
-    # filterset_fields = ("author",)
+    filterset_fields = ("author",)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:

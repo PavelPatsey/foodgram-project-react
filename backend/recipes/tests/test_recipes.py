@@ -1496,11 +1496,8 @@ class RecipeTest(TestCase):
         # pprint(response.json())
 
         # breakpoint()
-
-        # неправильный json, должны быть рецепты
-        # только с тегами id = 1
         test_json = {
-            "count": 4,
+            "count": 3,
             "next": None,
             "previous": None,
             "results": [
@@ -1534,32 +1531,6 @@ class RecipeTest(TestCase):
                     "name": "тестовый рецепт тег 1 и 2",
                     "image": None,
                     "text": "описание тестового рецепта тег 1 и 2",
-                    "cooking_time": 4,
-                },
-                {
-                    "id": 3,
-                    "tags": [
-                        {
-                            "id": 2,
-                            "name": "test Обед",
-                            "color": "#6AA84FFF",
-                            "slug": "dinner",
-                        }
-                    ],
-                    "author": {
-                        "email": "",
-                        "id": 3,
-                        "username": "test_user",
-                        "first_name": "",
-                        "last_name": "",
-                        "is_subscribed": False,
-                    },
-                    "ingredients": [],
-                    "is_favorited": False,
-                    "is_in_shopping_cart": False,
-                    "name": "тестовый рецепт тег 2",
-                    "image": None,
-                    "text": "описание тестового рецепта 2",
                     "cooking_time": 4,
                 },
                 {
