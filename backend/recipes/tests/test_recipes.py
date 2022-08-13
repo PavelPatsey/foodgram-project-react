@@ -1579,3 +1579,23 @@ class RecipeTest(TestCase):
         shoppingcart_recipes_id = [recipe_1.id, recipe_2.id]
         test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
         self.assertEqual(shoppingcart_recipes_id.sort(), test_recipes_id.sort())
+
+    def test_get_recipes_filter_by_is_in_shopping_cart_unauthorized_user(self):
+        """Фильтрация рецептов по списку покупок анонимным пользователем."""
+        test_user = User.objects.create(username="test_user")
+        recipe_1 = Recipe.objects.create(
+            author=test_user,
+            name="избранный рецепт 1",
+            image=None,
+            text="описание избранного рецепта 1",
+            cooking_time=4,
+        )
+        ShoppingCart.objects.create(
+            user=self.user,
+            recipe=recipe_1,
+        )
+        url = "/api/recipes/?is_in_shopping_cart=1"
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
+        self.assertEqual(sorted(test_recipes_id), [])
