@@ -94,7 +94,7 @@ class Recipe(models.Model):
         ordering = ["-id"]
 
     def __str__(self):
-        return f"{self.author}, {self.name}"
+        return f"{self.name}"
 
 
 class Favorite(models.Model):
