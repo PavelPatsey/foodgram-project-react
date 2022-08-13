@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
+from .filters import IngredientSearchFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngredientAmount, Recipe,
                      ShoppingCart, Tag)
 from .pagination import RecipePagination
@@ -23,6 +23,8 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IngredientSearchFilter
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

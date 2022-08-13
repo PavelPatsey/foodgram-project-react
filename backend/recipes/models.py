@@ -36,7 +36,7 @@ class Ingredient(models.Model):
     )
     measurement_unit = models.CharField(
         max_length=120,
-        verbose_name="Цвет в HEX",
+        verbose_name="Единица измерения",
     )
 
     class Meta:

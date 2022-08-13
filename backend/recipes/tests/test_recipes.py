@@ -1599,7 +1599,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         shoppingcart_recipes_id = [recipe_1.id, recipe_2.id]
         test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
-        self.assertEqual(shoppingcart_recipes_id.sort(), test_recipes_id.sort())
+        self.assertEqual(sorted(shoppingcart_recipes_id), sorted(test_recipes_id))
 
     def test_get_recipes_filter_by_is_in_shopping_cart_unauthorized_user(self):
         """Фильтрация рецептов по списку покупок анонимным пользователем."""
@@ -1620,3 +1620,56 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
         self.assertEqual(sorted(test_recipes_id), [])
+
+    def test_get_ingredients_search_by_name(self):
+        """Поиск ингредиентов по имени."""
+        ingredient_1 = Ingredient.objects.create(
+            name="ингредиент 1",
+            measurement_unit="шт",
+        )
+        ingredient_2 = Ingredient.objects.create(
+            name="ингредиент 2",
+            measurement_unit="шт",
+        )
+
+        url = "/api/ingredients/?name=ингредиент"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ingredient_ids = [ingredient_1.id, ingredient_2.id]
+        test_ingredient_ids = [ingredient["id"] for ingredient in response.json()]
+        self.assertEqual(sorted(ingredient_ids), sorted(test_ingredient_ids))
+
+        url = "/api/ingredients/?name=ингре"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ingredient_ids = [ingredient_1.id, ingredient_2.id]
+        test_ingredient_ids = [ingredient["id"] for ingredient in response.json()]
+        self.assertEqual(sorted(ingredient_ids), sorted(test_ingredient_ids))
+
+        url = "/api/ingredients/?name=ингредиент 1"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ingredient_ids = [ingredient_1.id]
+        test_ingredient_ids = [ingredient["id"] for ingredient in response.json()]
+        self.assertEqual(sorted(ingredient_ids), sorted(test_ingredient_ids))
+
+        url = "/api/ingredients/?name=диент"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ingredient_ids = [ingredient_1.id, ingredient_2.id]
+        test_ingredient_ids = [ingredient["id"] for ingredient in response.json()]
+        self.assertEqual(sorted(ingredient_ids), sorted(test_ingredient_ids))
+
+        url = "/api/ingredients/?name=test"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ingredient_ids = [self.ingredient_1.id, self.ingredient_2.id]
+        test_ingredient_ids = [ingredient["id"] for ingredient in response.json()]
+        self.assertEqual(sorted(ingredient_ids), sorted(test_ingredient_ids))
+
+        url = "/api/ingredients/?name=TEST"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ingredient_ids = [self.ingredient_1.id, self.ingredient_2.id]
+        test_ingredient_ids = [ingredient["id"] for ingredient in response.json()]
+        self.assertEqual(sorted(ingredient_ids), sorted(test_ingredient_ids))
