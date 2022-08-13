@@ -1457,16 +1457,14 @@ class RecipeTest(TestCase):
         """Фильтрация рецептов по автору."""
         test_user = User.objects.create(username="test_user")
         url = f"/api/recipes/?author={test_user.id}"
-        recipe = Recipe.objects.create(
+        recipe_1 = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт 1",
             image=None,
             text="описание тестового рецепта 1",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
-        Recipe.objects.create(
+        recipe_2 = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт 2",
             image=None,
@@ -1475,66 +1473,9 @@ class RecipeTest(TestCase):
         )
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        test_json = {
-            "count": 2,
-            "next": None,
-            "previous": None,
-            "results": [
-                {
-                    "id": 3,
-                    "tags": [],
-                    "author": {
-                        "email": "",
-                        "id": 3,
-                        "username": "test_user",
-                        "first_name": "",
-                        "last_name": "",
-                        "is_subscribed": False,
-                    },
-                    "ingredients": [],
-                    "is_favorited": False,
-                    "is_in_shopping_cart": False,
-                    "name": "тестовый рецепт 2",
-                    "image": None,
-                    "text": "описание тестового рецепта 2",
-                    "cooking_time": 4,
-                },
-                {
-                    "id": 2,
-                    "tags": [
-                        {
-                            "id": 1,
-                            "name": "test Завтрак",
-                            "color": "#6AA84FFF",
-                            "slug": "breakfast",
-                        }
-                    ],
-                    "author": {
-                        "email": "",
-                        "id": 3,
-                        "username": "test_user",
-                        "first_name": "",
-                        "last_name": "",
-                        "is_subscribed": False,
-                    },
-                    "ingredients": [
-                        {
-                            "id": 1,
-                            "name": "test апельсин",
-                            "measurement_unit": "шт.",
-                            "amount": 5,
-                        }
-                    ],
-                    "is_favorited": False,
-                    "is_in_shopping_cart": False,
-                    "name": "тестовый рецепт 1",
-                    "image": None,
-                    "text": "описание тестового рецепта 1",
-                    "cooking_time": 4,
-                },
-            ],
-        }
-        self.assertEqual(response.json(), test_json)
+        test_user_recipes_id = [recipe_1.id, recipe_2.id]
+        test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
+        self.assertEqual(test_user_recipes_id.sort(), test_recipes_id.sort())
 
     def test_get_recipes_filter_by_tags(self):
         """Фильтрация рецептов по тегам."""
