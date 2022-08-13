@@ -32,8 +32,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         IsAuthorOrAdminOrIsAuthenticatedOrReadOnly,
     ]
     filter_backends = (DjangoFilterBackend,)
-    filter_class = RecipeFilter
-    filterset_fields = ("author",)
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
