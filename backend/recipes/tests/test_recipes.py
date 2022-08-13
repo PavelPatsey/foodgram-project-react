@@ -1472,7 +1472,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_user_recipes_id = [recipe_1.id, recipe_2.id]
         test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
-        self.assertEqual(test_user_recipes_id.sort(), test_recipes_id.sort())
+        self.assertEqual(sorted(test_user_recipes_id), sorted(test_recipes_id))
 
     def test_get_recipes_filter_by_tags(self):
         """Фильтрация рецептов по тегам."""
@@ -1504,9 +1504,9 @@ class RecipeTest(TestCase):
         url = f"/api/recipes/?tags={self.tag.slug}"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        tag_recipes_id = [recipe_1.id, recipe_3.id]
+        tag_recipes_id = [recipe_1.id, recipe_3.id, self.recipe.id]
         test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
-        self.assertEqual(tag_recipes_id.sort(), test_recipes_id.sort())
+        self.assertEqual(sorted(tag_recipes_id), sorted(test_recipes_id))
 
     def test_get_recipes_filter_by_is_favorited(self):
         """Фильтрация рецептов по избранному."""
@@ -1542,43 +1542,64 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         favorite_recipes_id = [recipe_1.id, recipe_2.id]
         test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
-        self.assertEqual(favorite_recipes_id.sort(), test_recipes_id.sort())
+        self.assertEqual(sorted(favorite_recipes_id), sorted(test_recipes_id))
 
-    def test_get_recipes_filter_by_is_in_shopping_cart(self):
-        """Фильтрация рецептов по списку покупок."""
-        test_user = User.objects.create(username="test_user")
-        recipe_1 = Recipe.objects.create(
-            author=test_user,
-            name="избранный рецепт 1",
-            image=None,
-            text="описание избранного рецепта 1",
-            cooking_time=4,
-        )
-        recipe_2 = Recipe.objects.create(
-            author=test_user,
-            name="избранный рецепт 2",
-            image=None,
-            text="описание избранного рецепта 2",
-            cooking_time=4,
-        )
-        ShoppingCart.objects.bulk_create(
-            [
-                ShoppingCart(
-                    user=self.user,
-                    recipe=recipe_1,
-                ),
-                ShoppingCart(
-                    user=self.user,
-                    recipe=recipe_2,
-                ),
-            ]
-        )
-        url = "/api/recipes/?is_in_shopping_cart=1"
-        response = self.authorized_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        shoppingcart_recipes_id = [recipe_1.id, recipe_2.id]
-        test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
-        self.assertEqual(shoppingcart_recipes_id.sort(), test_recipes_id.sort())
+    # def test_get_recipes_filter_by_is_favorited_unauthorized_user(self):
+    #     """Фильтрация рецептов по избранному анонимным пользователем."""
+    #     test_user = User.objects.create(username="test_user")
+    #     recipe_1 = Recipe.objects.create(
+    #         author=test_user,
+    #         name="избранный рецепт 1",
+    #         image=None,
+    #         text="описание избранного рецепта 1",
+    #         cooking_time=4,
+    #     )
+
+    #     Favorite.objects.create(
+    #         user=self.user,
+    #         recipe=recipe_1,
+    #     )
+    #     url = "/api/recipes/?is_favorited=1"
+    #     response = self.authorized_client.get(url)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
+    #     self.assertEqual(test_recipes_id, [])
+    
+    # def test_get_recipes_filter_by_is_in_shopping_cart(self):
+    #     """Фильтрация рецептов по списку покупок."""
+    #     test_user = User.objects.create(username="test_user")
+    #     recipe_1 = Recipe.objects.create(
+    #         author=test_user,
+    #         name="избранный рецепт 1",
+    #         image=None,
+    #         text="описание избранного рецепта 1",
+    #         cooking_time=4,
+    #     )
+    #     recipe_2 = Recipe.objects.create(
+    #         author=test_user,
+    #         name="избранный рецепт 2",
+    #         image=None,
+    #         text="описание избранного рецепта 2",
+    #         cooking_time=4,
+    #     )
+    #     ShoppingCart.objects.bulk_create(
+    #         [
+    #             ShoppingCart(
+    #                 user=self.user,
+    #                 recipe=recipe_1,
+    #             ),
+    #             ShoppingCart(
+    #                 user=self.user,
+    #                 recipe=recipe_2,
+    #             ),
+    #         ]
+    #     )
+    #     url = "/api/recipes/?is_in_shopping_cart=1"
+    #     response = self.authorized_client.get(url)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     shoppingcart_recipes_id = [recipe_1.id, recipe_2.id]
+    #     test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
+    #     self.assertEqual(shoppingcart_recipes_id.sort(), test_recipes_id.sort())
 
     def test_get_recipes_filter_by_is_in_shopping_cart_unauthorized_user(self):
         """Фильтрация рецептов по списку покупок анонимным пользователем."""
