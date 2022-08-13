@@ -8,6 +8,12 @@ from .models import Recipe
 class RecipeFilter(FilterSet):
     author = filters.ModelChoiceFilter(queryset=User.objects.all())
     tags = filters.AllValuesMultipleFilter(field_name="tags__slug")
+    is_favorited = filters.NumberFilter(method="filter_is_favorited")
+
+    def filter_is_favorited(self, queryset, name, value):
+        if value and not self.request.user.is_anonymous:
+            return queryset.filter(favorites__user=self.request.user)
+        return queryset
 
     class Meta:
         model = Recipe

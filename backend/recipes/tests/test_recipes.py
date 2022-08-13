@@ -1373,6 +1373,86 @@ class RecipeTest(TestCase):
         test_json = {"errors": "Рецепт уже удален из корзины"}
         self.assertEqual(response.json(), test_json)
 
+    def test_download_shopping_cart(self):
+        """Скачать список покупок."""
+        test_user = User.objects.create_user(
+            username="test_user",
+        )
+
+        recipe = Recipe.objects.create(
+            author=test_user,
+            name="test recipe 1",
+            image=None,
+            text="text test recipe 1",
+            cooking_time=4,
+        )
+        ingredient_1 = Ingredient.objects.create(
+            name="jam",
+            measurement_unit="spoon",
+        )
+        ingredient_2 = Ingredient.objects.create(
+            name="cucumber",
+            measurement_unit="spoon",
+        )
+        ingredientamount_1 = IngredientAmount.objects.create(
+            ingredient=ingredient_1,
+            amount=5,
+        )
+        ingredientamount_2 = IngredientAmount.objects.create(
+            ingredient=ingredient_2,
+            amount=3,
+        )
+        recipe.ingredients.add(
+            ingredientamount_1,
+            ingredientamount_2,
+        )
+        ShoppingCart.objects.create(
+            user=self.user,
+            recipe=recipe,
+        )
+
+        recipe = Recipe.objects.create(
+            author=test_user,
+            name="test recipe 2",
+            image=None,
+            text="text test recipe 2",
+            cooking_time=4,
+        )
+        ingredient_3 = Ingredient.objects.create(
+            name="ketchup",
+            measurement_unit="spoon",
+        )
+        ingredientamount_3 = IngredientAmount.objects.create(
+            ingredient=ingredient_3,
+            amount=2,
+        )
+        ingredientamount_4 = IngredientAmount.objects.create(
+            ingredient=ingredient_1,
+            amount=10,
+        )
+        recipe.ingredients.add(
+            ingredientamount_3,
+            ingredientamount_4,
+        )
+        ShoppingCart.objects.create(
+            user=self.user,
+            recipe=recipe,
+        )
+
+        url = "/api/recipes/download_shopping_cart/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_text = b"jam (spoon) - 10 \ncucumber (spoon) - 3 \nketchup (spoon) - 2 \n"
+        self.assertEqual(response.getvalue(), test_text)
+
+    def test_download_shopping_cart_unauthorized_user(self):
+        """Нельзя скачать список покупок анонимным пользователем."""
+        url = "/api/recipes/download_shopping_cart/"
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        test_json = {"detail": "Учетные данные не были предоставлены."}
+        self.assertEqual(response.json(), test_json)
+
     def test_get_recipes_filter_by_author(self):
         """Фильтрация рецептов по автору."""
         test_user = User.objects.create(username="test_user")
@@ -1490,12 +1570,6 @@ class RecipeTest(TestCase):
         url = f"/api/recipes/?tags={self.tag.slug}"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # from pprint import pprint
-        # print()
-        # pprint(response.json())
-
-        # breakpoint()
         test_json = {
             "count": 3,
             "next": None,
@@ -1602,82 +1676,38 @@ class RecipeTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
-    def test_download_shopping_cart(self):
-        """Скачать список покупок."""
-        test_user = User.objects.create_user(
-            username="test_user",
-        )
-
-        recipe = Recipe.objects.create(
+    def test_get_recipes_filter_by_is_favorited(self):
+        """Фильтрация рецептов по избранному."""
+        test_user = User.objects.create(username="test_user")
+        recipe_1 = Recipe.objects.create(
             author=test_user,
-            name="test recipe 1",
+            name="избранный рецепт 1",
             image=None,
-            text="text test recipe 1",
+            text="описание избранного рецепта 1",
             cooking_time=4,
         )
-        ingredient_1 = Ingredient.objects.create(
-            name="jam",
-            measurement_unit="spoon",
-        )
-        ingredient_2 = Ingredient.objects.create(
-            name="cucumber",
-            measurement_unit="spoon",
-        )
-        ingredientamount_1 = IngredientAmount.objects.create(
-            ingredient=ingredient_1,
-            amount=5,
-        )
-        ingredientamount_2 = IngredientAmount.objects.create(
-            ingredient=ingredient_2,
-            amount=3,
-        )
-        recipe.ingredients.add(
-            ingredientamount_1,
-            ingredientamount_2,
-        )
-        ShoppingCart.objects.create(
-            user=self.user,
-            recipe=recipe,
-        )
-
-        recipe = Recipe.objects.create(
+        recipe_2 = Recipe.objects.create(
             author=test_user,
-            name="test recipe 2",
+            name="избранный рецепт 2",
             image=None,
-            text="text test recipe 2",
+            text="описание избранного рецепта 2",
             cooking_time=4,
         )
-        ingredient_3 = Ingredient.objects.create(
-            name="ketchup",
-            measurement_unit="spoon",
+        Favorite.objects.bulk_create(
+            [
+                Favorite(
+                    user=self.user,
+                    recipe=recipe_1,
+                ),
+                Favorite(
+                    user=self.user,
+                    recipe=recipe_2,
+                ),
+            ]
         )
-        ingredientamount_3 = IngredientAmount.objects.create(
-            ingredient=ingredient_3,
-            amount=2,
-        )
-        ingredientamount_4 = IngredientAmount.objects.create(
-            ingredient=ingredient_1,
-            amount=10,
-        )
-        recipe.ingredients.add(
-            ingredientamount_3,
-            ingredientamount_4,
-        )
-        ShoppingCart.objects.create(
-            user=self.user,
-            recipe=recipe,
-        )
-
-        url = "/api/recipes/download_shopping_cart/"
+        url = "/api/recipes/?is_favorited=1"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        test_text = b"jam (spoon) - 10 \ncucumber (spoon) - 3 \nketchup (spoon) - 2 \n"
-        self.assertEqual(response.getvalue(), test_text)
-
-    def test_download_shopping_cart_unauthorized_user(self):
-        """Нельзя скачать список покупок анонимным пользователем."""
-        url = "/api/recipes/download_shopping_cart/"
-        response = self.guest_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        test_json = {"detail": "Учетные данные не были предоставлены."}
-        self.assertEqual(response.json(), test_json)
+        favorite_recipes_id = [recipe_1.id, recipe_2.id]
+        test_recipes_id = [recipe["id"] for recipe in response.json()["results"]]
+        self.assertEqual(favorite_recipes_id.sort(), test_recipes_id.sort())
