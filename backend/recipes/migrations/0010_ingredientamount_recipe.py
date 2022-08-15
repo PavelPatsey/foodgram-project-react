@@ -27,7 +27,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "amount",
-                    models.ImageField(upload_to="", verbose_name="Количество"),
+                    models.ImageField(
+                        upload_to="", verbose_name="Количество"
+                    ),
                 ),
                 (
                     "ingredient",
@@ -65,7 +67,9 @@ class Migration(migrations.Migration):
                 ("text", models.TextField(verbose_name="Описание")),
                 (
                     "cooking_time",
-                    models.IntegerField(verbose_name="Время приготовления (в минутах)"),
+                    models.IntegerField(
+                        verbose_name="Время приготовления (в минутах)"
+                    ),
                 ),
                 (
                     "author",

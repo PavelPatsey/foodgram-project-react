@@ -13,6 +13,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="ingredient",
             name="measurement_unit",
-            field=models.CharField(max_length=120, verbose_name="Единица измерения"),
+            field=models.CharField(
+                max_length=120, verbose_name="Единица измерения"
+            ),
         ),
     ]

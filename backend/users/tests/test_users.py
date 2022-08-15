@@ -180,7 +180,9 @@ class UsersViewsTest(TestCase):
         }
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), {"password": ["Обязательное поле."]})
+        self.assertEqual(
+            response.json(), {"password": ["Обязательное поле."]}
+        )
 
     def test_create_user_without_email(self):
         """Регистрация пользователя без почты."""
@@ -206,7 +208,9 @@ class UsersViewsTest(TestCase):
         }
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), {"username": ["Обязательное поле."]})
+        self.assertEqual(
+            response.json(), {"username": ["Обязательное поле."]}
+        )
 
     def test_create_user_without_first_name(self):
         """Регистрация пользователя без first_name."""
@@ -219,7 +223,9 @@ class UsersViewsTest(TestCase):
         }
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), {"first_name": ["Обязательное поле."]})
+        self.assertEqual(
+            response.json(), {"first_name": ["Обязательное поле."]}
+        )
 
     def test_create_user_without_last_name(self):
         """Регистрация пользователя без last_name."""
@@ -232,7 +238,9 @@ class UsersViewsTest(TestCase):
         }
         response = self.guest_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), {"last_name": ["Обязательное поле."]})
+        self.assertEqual(
+            response.json(), {"last_name": ["Обязательное поле."]}
+        )
 
     def test_create_user_without_first_last_names(self):
         """Регистрация пользователя без имени и фамилии."""

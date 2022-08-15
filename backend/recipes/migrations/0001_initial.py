@@ -28,11 +28,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "color",
-                    models.CharField(max_length=7, verbose_name="Цветовой HEX-код"),
+                    models.CharField(
+                        max_length=7, verbose_name="Цветовой HEX-код"
+                    ),
                 ),
                 (
                     "slug",
-                    models.SlugField(max_length=120, unique=True, verbose_name="Slug"),
+                    models.SlugField(
+                        max_length=120, unique=True, verbose_name="Slug"
+                    ),
                 ),
             ],
         ),

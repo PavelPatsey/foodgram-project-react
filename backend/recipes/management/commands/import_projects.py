@@ -8,7 +8,9 @@ class Command(BaseCommand):
     help = "Import Users from `static/data/projects_example.csv`"
 
     def handle(self, *args, **kwargs):
-        with open("static/data/projects_example.csv", encoding="utf-8") as csvfile:
+        with open(
+            "static/data/projects_example.csv", encoding="utf-8"
+        ) as csvfile:
             csvreader = csv.reader(csvfile)
             next(csvreader)
             for row in csvreader:
