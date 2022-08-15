@@ -20,6 +20,8 @@ class Tag(models.Model):
     )
 
     class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
         unique_together = (
             "name",
             "color",
@@ -40,6 +42,8 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        verbose_name = "Ингредиент"
+        verbose_name_plural = "Ингредиенты"
         unique_together = (
             "name",
             "measurement_unit",
@@ -56,6 +60,10 @@ class IngredientAmount(models.Model):
         verbose_name="Ингредиент",
     )
     amount = models.IntegerField(verbose_name="Количество")
+
+    class Meta:
+        verbose_name = "Количество ингридиента"
+        verbose_name_plural = "Количество ингридиентов"
 
     def __str__(self):
         return f"{self.ingredient} * {self.amount}"
@@ -92,6 +100,8 @@ class Recipe(models.Model):
 
     class Meta:
         ordering = ["-id"]
+        verbose_name = "Рецепт"
+        verbose_name_plural = "Рецепты"
 
     def __str__(self):
         return f"{self.name}"
