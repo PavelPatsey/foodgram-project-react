@@ -78,26 +78,31 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def _do_post_method(self, request, model, error_data):
+        user = request.user
+        recipe = self.get_object()
+        if model.objects.filter(
+            user=user,
+            recipe=recipe,
+        ).exists():
+            return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+        model.objects.create(
+            user=user,
+            recipe=recipe,
+        )
+        serializer = ShortRecipeSerializer(
+            recipe,
+            context={"request": request},
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     @action(detail=True, methods=["post", "delete"])
     def favorite(self, request, pk=None):
         if request.method == "POST":
-            user = request.user
-            recipe = self.get_object()
-            if Favorite.objects.filter(
-                user=user,
-                recipe=recipe,
-            ).exists():
-                data = {"errors": "Рецепт уже добавлен в избранное"}
-                return Response(data, status=status.HTTP_400_BAD_REQUEST)
-            Favorite.objects.create(
-                user=user,
-                recipe=recipe,
-            )
-            serializer = ShortRecipeSerializer(
-                recipe,
-                context={"request": request},
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            model = Favorite
+            error_data = {"errors": "Рецепт уже добавлен в избранное"}
+            return self._do_post_method(request, model, error_data)
+
         if request.method == "DELETE":
             user = request.user
             recipe = self.get_object()
