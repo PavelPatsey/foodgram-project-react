@@ -10,22 +10,22 @@ from .models import (Favorite, Ingredient, IngredientAmount, Recipe,
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = [
+        fields = (
             "id",
             "name",
             "color",
             "slug",
-        ]
+        )
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = [
+        fields = (
             "id",
             "name",
             "measurement_unit",
-        ]
+        )
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
@@ -39,12 +39,12 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientAmount
-        fields = [
+        fields = (
             "id",
             "name",
             "measurement_unit",
             "amount",
-        ]
+        )
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
@@ -63,7 +63,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = [
+        fields = (
             "id",
             "tags",
             "author",
@@ -74,7 +74,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             "image",
             "text",
             "cooking_time",
-        ]
+        )
 
     def get_is_favorited(self, obj):
         user = self.context["request"].user
@@ -103,12 +103,12 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = [
+        fields = (
             "id",
             "name",
             "image",
             "cooking_time",
-        ]
+        )
 
 
 class IngredientAmountWriteSerializer(serializers.ModelSerializer):
@@ -118,10 +118,10 @@ class IngredientAmountWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientAmount
-        fields = [
+        fields = (
             "id",
             "amount",
-        ]
+        )
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -137,14 +137,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = [
+        fields = (
             "ingredients",
             "tags",
             "image",
             "name",
             "text",
             "cooking_time",
-        ]
+        )
 
     def create(self, validated_data):
         tags_data = validated_data.pop("tags")
