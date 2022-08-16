@@ -57,12 +57,12 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = [
+        fields = (
             "id",
             "name",
             "image",
             "cooking_time",
-        ]
+        )
 
 
 class UserSubscriptionSerializer(serializers.ModelSerializer):
@@ -72,7 +72,7 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = [
+        fields = (
             "email",
             "id",
             "username",
@@ -81,7 +81,7 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
             "is_subscribed",
             "recipes",
             "recipes_count",
-        ]
+        )
 
     def get_is_subscribed(self, obj):
         user = self.context["request"].user
