@@ -15,6 +15,20 @@ class UsersViewsTest(TestCase):
         cls.authorized_client = APIClient()
         cls.authorized_client.force_authenticate(cls.user)
 
+        cls.test_user = User.objects.create_user(username="testusername")
+
+        cls.user_vasya = User.objects.create_user(
+            email="vasya_pupkin@mail.com",
+            username="vasya_pupkin",
+            first_name="Vasya",
+            last_name="Pupkin",
+        )
+
+        Subscription.objects.create(
+            user=cls.user,
+            author=cls.user_vasya,
+        )
+
         cls.ingredient_orange = Ingredient.objects.create(
             name="test апельсин",
             measurement_unit="шт.",
@@ -71,24 +85,12 @@ class UsersViewsTest(TestCase):
     def test_get_users_list_unauthorized_user(self):
         """Получение списка всех пользователей анонимом."""
         url = "/api/users/"
-        User.objects.create_user(username="testusername")
         response = self.guest_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_users_list(self):
         """Получение списка всех пользователей авторизованным пользователем."""
         url = "/api/users/"
-        User.objects.create_user(username="testusername")
-        user = User.objects.create_user(
-            email="vasya_pupkin@mail.com",
-            username="vasya_pupkin",
-            first_name="Vasya",
-            last_name="Pupkin",
-        )
-        Subscription.objects.create(
-            user=self.user,
-            author=user,
-        )
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
@@ -161,7 +163,10 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         test_json = {
             "password": [
-                "Введённый пароль слишком короткий. Он должен содержать как минимум 8 символов.",
+                (
+                    "Введённый пароль слишком короткий. "
+                    + "Он должен содержать как минимум 8 символов."
+                ),
                 "Введённый пароль слишком широко распространён.",
                 "Введённый пароль состоит только из цифр.",
             ]
@@ -261,16 +266,18 @@ class UsersViewsTest(TestCase):
 
     def test_user_profile(self):
         """Профиль пользователя."""
-        user = User.objects.get(username="authorized_user")
+        user = self.user_vasya
+        client_vasya = APIClient()
+        client_vasya.force_authenticate(user)
         url = f"/api/users/{user.id}/"
-        response = self.authorized_client.get(url)
+        response = client_vasya.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
-            "email": "",
-            "id": user.id,
-            "username": "authorized_user",
-            "first_name": "",
-            "last_name": "",
+            "email": "vasya_pupkin@mail.com",
+            "id": 3,
+            "username": "vasya_pupkin",
+            "first_name": "Vasya",
+            "last_name": "Pupkin",
             "is_subscribed": False,
         }
         self.assertEqual(response.json(), test_json)
@@ -278,7 +285,7 @@ class UsersViewsTest(TestCase):
     def test_user_profile_by_unauthorized_user(self):
         """Профиль пользователя.
         Учетные данные не были предоставлены."""
-        user = User.objects.get(username="authorized_user")
+        user = self.user_vasya
         url = f"/api/users/{user.id}/"
         response = self.guest_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -287,8 +294,8 @@ class UsersViewsTest(TestCase):
 
     def test_user_profile_404(self):
         """Профиль пользователя. Страница не найдена."""
-        user = User.objects.get(username="authorized_user")
-        url = f"/api/users/{user.id + 1}/"
+        count = User.objects.count()
+        url = f"/api/users/{count + 1}/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
@@ -336,7 +343,8 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_set_password_incorrect_current_password(self):
-        """Изменение пароля. Некорректный текущий пароль."""
+        """Изменение пароля. Некорректный текущий пароль.
+        Неправильный пароль."""
         url = "/api/users/set_password/"
         user = User.objects.create_user(
             username="test_user",
@@ -354,7 +362,8 @@ class UsersViewsTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_set_password_no_new_password(self):
-        """Изменение пароля. Некорректный текущий пароль."""
+        """Изменение пароля. Некорректный текущий пароль.
+        Обязательное поле."""
         url = "/api/users/set_password/"
         user = User.objects.create_user(
             username="test_user",
@@ -424,12 +433,12 @@ class UsersViewsTest(TestCase):
 
     def test_subscribe_authorized_client(self):
         """Подписаться авторизованным пользователем."""
-        test_user = User.objects.create_user(username="test_username")
-        authorized_client = APIClient()
-        authorized_client.force_authenticate(test_user)
+        user = self.user_vasya
+        client_vasya = APIClient()
+        client_vasya.force_authenticate(user)
         count = Subscription.objects.count()
         url = f"/api/users/{self.user.id}/subscribe/"
-        response = authorized_client.post(url)
+        response = client_vasya.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Subscription.objects.count(), count + 1)
         test_json = {
@@ -467,7 +476,7 @@ class UsersViewsTest(TestCase):
 
     def test_subscribe_user_twice(self):
         """Нельзя подписаться на пользователя, на которого вы уже подписаны."""
-        test_user = User.objects.create_user(username="test_username")
+        test_user = self.test_user
         authorized_client = APIClient()
         authorized_client.force_authenticate(test_user)
         count = Subscription.objects.count()
@@ -490,8 +499,8 @@ class UsersViewsTest(TestCase):
 
     def test_subscribe_404(self):
         """Нельзя подписаться на несущесвующего пользователя."""
-        count = Subscription.objects.count()
-        url = f"/api/users/{count + 2}/subscribe/"
+        user_count = User.objects.count()
+        url = f"/api/users/{user_count + 1}/subscribe/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
@@ -499,7 +508,7 @@ class UsersViewsTest(TestCase):
 
     def test_unsubscribe_authorized_client(self):
         """Отписаться авторизованным пользователем."""
-        test_user = User.objects.create_user(username="test_username")
+        test_user = self.test_user
         authorized_client = APIClient()
         authorized_client.force_authenticate(test_user)
         count = Subscription.objects.count()
@@ -513,7 +522,7 @@ class UsersViewsTest(TestCase):
 
     def test_unsubscribe_from_user_you_are_not_subscribing(self):
         """Нельзя отписаться от пользователя, на которого вы не подписаны."""
-        test_user = User.objects.create_user(username="test_username")
+        test_user = self.test_user
         authorized_client = APIClient()
         authorized_client.force_authenticate(test_user)
         count = Subscription.objects.count()
@@ -539,8 +548,8 @@ class UsersViewsTest(TestCase):
 
     def test_unsubscribe_404(self):
         """Нельзя отписаться от несущесвующего пользователя."""
-        count = Subscription.objects.count()
-        url = f"/api/users/{count + 2}/subscribe/"
+        count = User.objects.count()
+        url = f"/api/users/{count + 1}/subscribe/"
         response = self.authorized_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
@@ -556,6 +565,7 @@ class UsersViewsTest(TestCase):
         test_author_3 = User.objects.create(username="test_author_3")
         test_author_4 = User.objects.create(username="test_author_4")
         test_author_2 = User.objects.create(username="test_author_2")
+
         Subscription.objects.bulk_create(
             [
                 Subscription(user=self.user, author=test_author_6),
@@ -567,17 +577,18 @@ class UsersViewsTest(TestCase):
                 Subscription(user=self.user, author=test_author_7),
             ]
         )
+
         url = "/api/users/subscriptions/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
-            "count": 7,
+            "count": 8,
             "next": "http://testserver/api/users/subscriptions/?page=2",
             "previous": None,
             "results": [
                 {
                     "email": "",
-                    "id": 3,
+                    "id": 5,
                     "username": "test_author_7",
                     "first_name": "",
                     "last_name": "",
@@ -587,7 +598,7 @@ class UsersViewsTest(TestCase):
                 },
                 {
                     "email": "",
-                    "id": 4,
+                    "id": 6,
                     "username": "test_author_5",
                     "first_name": "",
                     "last_name": "",
@@ -597,7 +608,7 @@ class UsersViewsTest(TestCase):
                 },
                 {
                     "email": "",
-                    "id": 6,
+                    "id": 8,
                     "username": "test_author_3",
                     "first_name": "",
                     "last_name": "",
@@ -607,7 +618,7 @@ class UsersViewsTest(TestCase):
                 },
                 {
                     "email": "",
-                    "id": 5,
+                    "id": 7,
                     "username": "test_author_1",
                     "first_name": "",
                     "last_name": "",
@@ -617,7 +628,7 @@ class UsersViewsTest(TestCase):
                 },
                 {
                     "email": "",
-                    "id": 8,
+                    "id": 10,
                     "username": "test_author_2",
                     "first_name": "",
                     "last_name": "",
@@ -627,7 +638,7 @@ class UsersViewsTest(TestCase):
                 },
                 {
                     "email": "",
-                    "id": 7,
+                    "id": 9,
                     "username": "test_author_4",
                     "first_name": "",
                     "last_name": "",
