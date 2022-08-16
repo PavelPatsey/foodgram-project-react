@@ -177,8 +177,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f"({ingredient_dict[ingredient][1]}) - "
                 f"{ingredient_dict[ingredient][2]} \n"
             )
-        response = HttpResponse(
+        return HttpResponse(
             shopping_cart_text,
             content_type="text/plain; charset=utf8",
         )
-        return response
