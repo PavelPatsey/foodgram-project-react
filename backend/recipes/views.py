@@ -96,25 +96,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def _do_delete_method(self, request, model, error_data):
+        user = request.user
+        recipe = self.get_object()
+        favorite = model.objects.filter(
+            user=user,
+            recipe=recipe,
+        )
+        if favorite.exists():
+            favorite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=True, methods=["post", "delete"])
     def favorite(self, request, pk=None):
         if request.method == "POST":
             model = Favorite
             error_data = {"errors": "Рецепт уже добавлен в избранное"}
             return self._do_post_method(request, model, error_data)
-
         if request.method == "DELETE":
-            user = request.user
-            recipe = self.get_object()
-            favorite = Favorite.objects.filter(
-                user=user,
-                recipe=recipe,
-            )
-            if favorite.exists():
-                favorite.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            data = {"errors": "Рецепт уже удален из избранного"}
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            model = Favorite
+            error_data = {"errors": "Рецепт уже удален из избранного"}
+            return self._do_delete_method(request, model, error_data)
 
     @action(detail=True, methods=["post", "delete"])
     def shopping_cart(self, request, pk=None):
