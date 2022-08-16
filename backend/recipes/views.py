@@ -119,23 +119,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post", "delete"])
     def shopping_cart(self, request, pk=None):
         if request.method == "POST":
-            user = request.user
-            recipe = self.get_object()
-            if ShoppingCart.objects.filter(
-                user=user,
-                recipe=recipe,
-            ).exists():
-                data = {"errors": "Рецепт уже добавлен в корзину"}
-                return Response(data, status=status.HTTP_400_BAD_REQUEST)
-            ShoppingCart.objects.create(
-                user=user,
-                recipe=recipe,
-            )
-            serializer = ShortRecipeSerializer(
-                recipe,
-                context={"request": request},
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            model = ShoppingCart
+            error_data = {"errors": "Рецепт уже добавлен в корзину"}
+            return self._do_post_method(request, model, error_data)
+
         if request.method == "DELETE":
             user = request.user
             recipe = self.get_object()
