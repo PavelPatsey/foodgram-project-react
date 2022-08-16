@@ -4,7 +4,7 @@ from django.test import TestCase
 from ..models import Subscription, User
 
 
-class UsersViewsTest(TestCase):
+class UsersModelsViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = User.objects.create(username="user")
