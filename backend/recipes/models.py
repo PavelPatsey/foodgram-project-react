@@ -22,10 +22,12 @@ class Tag(models.Model):
     class Meta:
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
-        unique_together = (
-            "name",
-            "color",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "color"],
+                name="unique_tag_name_color",
+            )
+        ]
 
     def __str__(self):
         return self.slug[:15]
@@ -44,10 +46,12 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
-        unique_together = (
-            "name",
-            "measurement_unit",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "measurement_unit"],
+                name="unique_ingredient_name_measurement_unit",
+            )
+        ]
 
     def __str__(self):
         return f"{self.name}, {self.measurement_unit}"
