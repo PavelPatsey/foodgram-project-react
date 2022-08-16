@@ -23,12 +23,12 @@ class UsersViewsTest(TestCase):
             name="test варенье",
             measurement_unit="ложка",
         )
-        cls.tag = Tag.objects.create(
+        cls.tag_breakfast = Tag.objects.create(
             name="test Завтрак",
             color="#6AA84FFF",
             slug="breakfast",
         )
-        cls.tag_2 = Tag.objects.create(
+        cls.tag_dinner = Tag.objects.create(
             name="test Обед",
             color="#6AA84FFF",
             slug="dinner",
@@ -41,25 +41,25 @@ class UsersViewsTest(TestCase):
             ingredient=cls.ingredient_jam,
             amount=1,
         )
-        cls.recipe = Recipe.objects.create(
+        cls.recipe_orange_jam = Recipe.objects.create(
             author=cls.user,
             name="test рецепт",
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        cls.recipe.tags.add(cls.tag)
-        cls.recipe.ingredients.add(
+        cls.recipe_orange_jam.tags.add(cls.tag_breakfast)
+        cls.recipe_orange_jam.ingredients.add(
             cls.ingredientamount_orange,
             cls.ingredientamount_jam,
         )
-        cls.recipe_2 = Recipe.objects.create(
+        cls.recipe_breakfast = Recipe.objects.create(
             author=cls.user,
             name="test рецепт 2",
             text="описание тестового рецепта 2",
             cooking_time=10,
         )
-        cls.recipe_2.tags.add(cls.tag)
-        cls.recipe_2.ingredients.add(
+        cls.recipe_breakfast.tags.add(cls.tag_breakfast)
+        cls.recipe_breakfast.ingredients.add(
             cls.ingredientamount_orange,
             cls.ingredientamount_jam,
         )
@@ -69,7 +69,7 @@ class UsersViewsTest(TestCase):
         self.assertEqual(True, True)
 
     def test_get_users_list_unauthorized_user(self):
-        """Получение списка всех пользователей неавторизованным пользователем"""
+        """Получение списка всех пользователей анонимом."""
         url = "/api/users/"
         User.objects.create_user(username="testusername")
         response = self.guest_client.get(url)
@@ -91,7 +91,6 @@ class UsersViewsTest(TestCase):
         )
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # breakpoint()
         test_json = {
             "count": 3,
             "next": None,
