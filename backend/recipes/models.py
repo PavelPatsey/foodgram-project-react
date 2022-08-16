@@ -24,7 +24,10 @@ class Tag(models.Model):
         verbose_name_plural = "Теги"
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "color"],
+                fields=(
+                    "name",
+                    "color",
+                ),
                 name="unique_tag_name_color",
             )
         ]
@@ -48,7 +51,10 @@ class Ingredient(models.Model):
         verbose_name_plural = "Ингредиенты"
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "measurement_unit"],
+                fields=(
+                    "name",
+                    "measurement_unit",
+                ),
                 name="unique_ingredient_name_measurement_unit",
             )
         ]
@@ -130,8 +136,11 @@ class Favorite(models.Model):
         verbose_name_plural = "Избранные рецепты"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "recipe"],
-                name="unique_user_favorite_recipe",
+                fields=(
+                    "user",
+                    "recipe",
+                ),
+                name="unique_favorite_user_recipe",
             )
         ]
 
@@ -159,8 +168,11 @@ class ShoppingCart(models.Model):
         verbose_name_plural = "В корзине"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "recipe"],
-                name="unique_user_recipe_in_shoppingcart",
+                fields=(
+                    "user",
+                    "recipe",
+                ),
+                name="unique_shoppingcart_user_recipe",
             )
         ]
 
