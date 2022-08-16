@@ -28,8 +28,10 @@ class UsersViewsTest(TestCase):
             user=self.user,
             author=self.author,
         )
-        error = "UNIQUE constraint failed: users_subscription.user_id, "
-        error += "users_subscription.author_id"
+        error = (
+            "UNIQUE constraint failed: users_subscription.user_id, "
+            + "users_subscription.author_id"
+        )
         with self.assertRaisesMessage(IntegrityError, error):
             Subscription.objects.create(
                 user=self.user,
