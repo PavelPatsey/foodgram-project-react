@@ -15,11 +15,11 @@ class UsersViewsTest(TestCase):
         cls.authorized_client = APIClient()
         cls.authorized_client.force_authenticate(cls.user)
 
-        cls.ingredient_1 = Ingredient.objects.create(
+        cls.ingredient_orange = Ingredient.objects.create(
             name="test апельсин",
             measurement_unit="шт.",
         )
-        cls.ingredient_2 = Ingredient.objects.create(
+        cls.ingredient_jam = Ingredient.objects.create(
             name="test варенье",
             measurement_unit="ложка",
         )
@@ -33,12 +33,12 @@ class UsersViewsTest(TestCase):
             color="#6AA84FFF",
             slug="dinner",
         )
-        cls.ingredientamount_1 = IngredientAmount.objects.create(
-            ingredient=cls.ingredient_1,
+        cls.ingredientamount_orange = IngredientAmount.objects.create(
+            ingredient=cls.ingredient_orange,
             amount=5,
         )
-        cls.ingredientamount_2 = IngredientAmount.objects.create(
-            ingredient=cls.ingredient_2,
+        cls.ingredientamount_jam = IngredientAmount.objects.create(
+            ingredient=cls.ingredient_jam,
             amount=1,
         )
         cls.recipe = Recipe.objects.create(
@@ -49,8 +49,8 @@ class UsersViewsTest(TestCase):
         )
         cls.recipe.tags.add(cls.tag)
         cls.recipe.ingredients.add(
-            cls.ingredientamount_1,
-            cls.ingredientamount_2,
+            cls.ingredientamount_orange,
+            cls.ingredientamount_jam,
         )
         cls.recipe_2 = Recipe.objects.create(
             author=cls.user,
@@ -60,8 +60,8 @@ class UsersViewsTest(TestCase):
         )
         cls.recipe_2.tags.add(cls.tag)
         cls.recipe_2.ingredients.add(
-            cls.ingredientamount_1,
-            cls.ingredientamount_2,
+            cls.ingredientamount_orange,
+            cls.ingredientamount_jam,
         )
 
     def test_cool_test(self):
