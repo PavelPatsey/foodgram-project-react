@@ -29,30 +29,30 @@ class RecipeTest(TestCase):
         cls.admin_client = APIClient()
         cls.admin_client.force_authenticate(cls.admin_user)
 
-        cls.ingredient_1 = Ingredient.objects.create(
+        cls.ingredient_orange = Ingredient.objects.create(
             name="test апельсин",
             measurement_unit="шт.",
         )
-        cls.ingredient_2 = Ingredient.objects.create(
+        cls.ingredient_jam = Ingredient.objects.create(
             name="test варенье",
             measurement_unit="ложка",
         )
-        cls.tag = Tag.objects.create(
+        cls.tag_breakfast = Tag.objects.create(
             name="test Завтрак",
             color="#6AA84FFF",
             slug="breakfast",
         )
-        cls.tag_2 = Tag.objects.create(
+        cls.tag_dinner = Tag.objects.create(
             name="test Обед",
             color="#6AA84FFF",
             slug="dinner",
         )
-        cls.ingredientamount_1 = IngredientAmount.objects.create(
-            ingredient=cls.ingredient_1,
+        cls.ingredientamount_orange = IngredientAmount.objects.create(
+            ingredient=cls.ingredient_orange,
             amount=5,
         )
-        cls.ingredientamount_2 = IngredientAmount.objects.create(
-            ingredient=cls.ingredient_2,
+        cls.ingredientamount_jam = IngredientAmount.objects.create(
+            ingredient=cls.ingredient_jam,
             amount=1,
         )
         cls.small_gif = (
@@ -88,10 +88,10 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        cls.recipe.tags.add(cls.tag)
+        cls.recipe.tags.add(cls.tag_breakfast)
         cls.recipe.ingredients.add(
-            cls.ingredientamount_1,
-            cls.ingredientamount_2,
+            cls.ingredientamount_orange,
+            cls.ingredientamount_jam,
         )
 
     @classmethod
@@ -119,8 +119,8 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
@@ -302,10 +302,10 @@ class RecipeTest(TestCase):
         recipe_count = Recipe.objects.count()
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
@@ -323,10 +323,10 @@ class RecipeTest(TestCase):
         recipe_count = Recipe.objects.count()
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
@@ -390,7 +390,7 @@ class RecipeTest(TestCase):
         Игредиенты обязательное поле."""
         url = "/api/recipes/"
         data = {
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
@@ -407,8 +407,8 @@ class RecipeTest(TestCase):
         url = "/api/recipes/"
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
@@ -425,10 +425,10 @@ class RecipeTest(TestCase):
         url = "/api/recipes/"
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
@@ -444,10 +444,10 @@ class RecipeTest(TestCase):
         url = "/api/recipes/"
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
@@ -463,10 +463,10 @@ class RecipeTest(TestCase):
         url = "/api/recipes/"
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
             "cooking_time": 30,
@@ -482,10 +482,10 @@ class RecipeTest(TestCase):
         url = "/api/recipes/"
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
@@ -535,10 +535,10 @@ class RecipeTest(TestCase):
         url = "/api/recipes/"
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
@@ -562,14 +562,14 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
@@ -633,10 +633,10 @@ class RecipeTest(TestCase):
         url = f"/api/recipes/{self.recipe.id}/"
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
@@ -656,14 +656,14 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
@@ -686,14 +686,14 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
@@ -761,14 +761,14 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
@@ -790,8 +790,8 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         data = {}
         url = f"/api/recipes/{recipe.id}/"
         response = self.authorized_client.patch(url, data, format="json")
@@ -816,14 +816,14 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         data = {
             "ingredients": [
-                {"id": self.ingredient_1.id, "amount": 10},
-                {"id": self.ingredient_2.id, "amount": 30},
+                {"id": self.ingredient_orange.id, "amount": 10},
+                {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "tags": [self.tag.id, self.tag_2.id],
+            "tags": [self.tag_breakfast.id, self.tag_dinner.id],
             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
@@ -847,8 +847,8 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         url = f"/api/recipes/{recipe.id}/"
         response = self.authorized_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -874,8 +874,8 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         url = f"/api/recipes/{recipe.id}/"
         response = self.authorized_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -893,8 +893,8 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта",
             cooking_time=4,
         )
-        recipe.tags.add(self.tag)
-        recipe.ingredients.add(self.ingredientamount_1)
+        recipe.tags.add(self.tag_breakfast)
+        recipe.ingredients.add(self.ingredientamount_orange)
         url = f"/api/recipes/{recipe.id}/"
         response = self.admin_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -1492,7 +1492,7 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта 1",
             cooking_time=4,
         )
-        recipe_1.tags.add(self.tag)
+        recipe_1.tags.add(self.tag_breakfast)
         recipe_2 = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт тег 2",
@@ -1500,7 +1500,7 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта 2",
             cooking_time=4,
         )
-        recipe_2.tags.add(self.tag_2)
+        recipe_2.tags.add(self.tag_dinner)
         recipe_3 = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт тег 1 и 2",
@@ -1508,8 +1508,8 @@ class RecipeTest(TestCase):
             text="описание тестового рецепта тег 1 и 2",
             cooking_time=4,
         )
-        recipe_3.tags.add(self.tag, self.tag_2)
-        url = f"/api/recipes/?tags={self.tag.slug}"
+        recipe_3.tags.add(self.tag_breakfast, self.tag_dinner)
+        url = f"/api/recipes/?tags={self.tag_breakfast.slug}"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         tag_recipes_id = [recipe_1.id, recipe_3.id, self.recipe.id]
@@ -1693,7 +1693,7 @@ class RecipeTest(TestCase):
         url = "/api/ingredients/?name=test"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        ingredient_ids = [self.ingredient_1.id, self.ingredient_2.id]
+        ingredient_ids = [self.ingredient_orange.id, self.ingredient_jam.id]
         test_ingredient_ids = [
             ingredient["id"] for ingredient in response.json()
         ]
@@ -1702,7 +1702,7 @@ class RecipeTest(TestCase):
         url = "/api/ingredients/?name=TEST"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        ingredient_ids = [self.ingredient_1.id, self.ingredient_2.id]
+        ingredient_ids = [self.ingredient_orange.id, self.ingredient_jam.id]
         test_ingredient_ids = [
             ingredient["id"] for ingredient in response.json()
         ]
