@@ -29,6 +29,8 @@ class RecipeTest(TestCase):
         cls.admin_client = APIClient()
         cls.admin_client.force_authenticate(cls.admin_user)
 
+        cls.test_user = User.objects.create_user(username="testusername")
+
         cls.ingredient_orange = Ingredient.objects.create(
             name="test апельсин",
             measurement_unit="шт.",
@@ -68,7 +70,20 @@ class RecipeTest(TestCase):
             content=cls.small_gif,
             content_type="image/gif",
         )
-        cls.small_gif_1 = (
+        cls.recipe_breakfast = Recipe.objects.create(
+            author=cls.user,
+            name="test рецепт",
+            image=cls.uploaded,
+            text="описание тестового рецепта",
+            cooking_time=4,
+        )
+        cls.recipe_breakfast.tags.add(cls.tag_breakfast)
+        cls.recipe_breakfast.ingredients.add(
+            cls.ingredientamount_orange,
+            cls.ingredientamount_jam,
+        )
+
+        cls.small_gif_test = (
             b"\x47\x49\x46\x38\x39\x61\x02\x00"
             b"\x01\x00\x80\x00\x00\x00\x00\x00"
             b"\xFF\xFF\xFF\x21\xF9\x04\x00\x00"
@@ -76,23 +91,20 @@ class RecipeTest(TestCase):
             b"\x02\x00\x01\x00\x00\x02\x02\x0C"
             b"\x0A\x00\x3B"
         )
-        cls.uploaded_1 = SimpleUploadedFile(
+        cls.uploaded_test = SimpleUploadedFile(
             name="small_1.gif",
-            content=cls.small_gif_1,
+            content=cls.small_gif_test,
             content_type="image/gif",
         )
         cls.recipe = Recipe.objects.create(
             author=cls.user,
-            name="test рецепт",
-            image=cls.uploaded,
+            name="тестовый рецепт",
+            image=cls.uploaded_test,
             text="описание тестового рецепта",
             cooking_time=4,
         )
         cls.recipe.tags.add(cls.tag_breakfast)
-        cls.recipe.ingredients.add(
-            cls.ingredientamount_orange,
-            cls.ingredientamount_jam,
-        )
+        cls.recipe.ingredients.add(cls.ingredientamount_orange)
 
     @classmethod
     def tearDownClass(cls):
@@ -112,15 +124,6 @@ class RecipeTest(TestCase):
     def test_get_recipes_list_authorized_client(self):
         """Получение списка рецептов авторизованным пользователем."""
         url = "/api/recipes/"
-        recipe = Recipe.objects.create(
-            author=self.user,
-            name="тестовый рецепт",
-            image=self.uploaded_1,
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
@@ -157,7 +160,9 @@ class RecipeTest(TestCase):
                     "is_favorited": False,
                     "is_in_shopping_cart": False,
                     "name": "тестовый рецепт",
-                    "image": "http://testserver/media/recipes/images/small_1.gif",
+                    "image": (
+                        "http://testserver/media/recipes/images/small_1.gif"
+                    ),
                     "text": "описание тестового рецепта",
                     "cooking_time": 4,
                 },
@@ -196,7 +201,9 @@ class RecipeTest(TestCase):
                     "is_favorited": False,
                     "is_in_shopping_cart": False,
                     "name": "test рецепт",
-                    "image": "http://testserver/media/recipes/images/small.gif",
+                    "image": (
+                        "http://testserver/media/recipes/images/small.gif"
+                    ),
                     "text": "описание тестового рецепта",
                     "cooking_time": 4,
                 },
@@ -306,7 +313,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
@@ -327,7 +338,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
@@ -339,7 +354,7 @@ class RecipeTest(TestCase):
         test_string = "http://testserver/media/recipes/images/"
         self.assertTrue(test_string in image)
         test_json = {
-            "id": 2,
+            "id": 3,
             "tags": [
                 {
                     "id": 1,
@@ -386,12 +401,15 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_without_ingredients(self):
-        """Создание рецепта.
-        Игредиенты обязательное поле."""
+        """Создание рецепта. Игредиенты обязательное поле."""
         url = "/api/recipes/"
         data = {
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
@@ -402,15 +420,18 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_without_tags(self):
-        """Создание рецепта.
-        Теги обязательное поле."""
+        """Создание рецепта. Теги обязательное поле."""
         url = "/api/recipes/"
         data = {
             "ingredients": [
                 {"id": self.ingredient_orange.id, "amount": 10},
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
@@ -439,8 +460,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_without_name(self):
-        """Создание рецепта.
-        Название рецепта обязательное поле."""
+        """Создание рецепта. Название рецепта обязательное поле."""
         url = "/api/recipes/"
         data = {
             "ingredients": [
@@ -448,7 +468,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
         }
@@ -467,7 +491,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "cooking_time": 30,
         }
@@ -477,8 +505,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_without_cooking_time(self):
-        """Создание рецепта.
-        Время готовки обязательное поле."""
+        """Создание рецепта. Время готовки обязательное поле."""
         url = "/api/recipes/"
         data = {
             "ingredients": [
@@ -486,7 +513,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
         }
@@ -496,11 +527,14 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_without_ingredients_tags(self):
-        """Создание рецепта.
-        Теги и игредиенты обязательные поля."""
+        """Создание рецепта. Теги и игредиенты обязательные поля."""
         url = "/api/recipes/"
         data = {
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": 30,
@@ -530,8 +564,8 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_negative_cooking_time(self):
-        """Создание рецепта авторизованным пользователем.
-        с отрицательным временем готовки"""
+        """Создание рецепта авторизованным пользователем с отрицательным.
+        временем готовки"""
         url = "/api/recipes/"
         data = {
             "ingredients": [
@@ -539,7 +573,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "Тестовый рецепт обеда",
             "text": "Описание тестового рецепта обеда",
             "cooking_time": -1,
@@ -558,7 +596,7 @@ class RecipeTest(TestCase):
         recipe = Recipe.objects.create(
             author=self.user,
             name="тестовый рецепт",
-            image=self.uploaded_1,
+            image=self.uploaded_test,
             text="описание тестового рецепта",
             cooking_time=4,
         )
@@ -570,7 +608,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 21,
@@ -582,7 +624,7 @@ class RecipeTest(TestCase):
         test_string = "http://testserver/media/recipes/images/"
         self.assertTrue(test_string in image)
         test_json = {
-            "id": 2,
+            "id": 3,
             "tags": [
                 {
                     "id": 1,
@@ -637,7 +679,11 @@ class RecipeTest(TestCase):
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 21,
@@ -649,52 +695,52 @@ class RecipeTest(TestCase):
 
     def test_patch_recipe_not_author(self):
         """Обновление чужого рецепта."""
-        recipe = Recipe.objects.create(
-            author=self.admin_user,
-            name="тестовый рецепт",
-            image=self.uploaded_1,
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
+        test_user = self.test_user
+        test_user_client = APIClient()
+        test_user_client.force_authenticate(test_user)
+
+        recipe = self.recipe
         data = {
             "ingredients": [
                 {"id": self.ingredient_orange.id, "amount": 10},
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 21,
         }
+
         url = f"/api/recipes/{recipe.id}/"
-        response = self.authorized_client.patch(url, data, format="json")
+        response = test_user_client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         test_json = {
-            "detail": "У вас недостаточно прав для выполнения данного действия."
+            "detail": (
+                "У вас недостаточно прав для "
+                + "выполнения данного действия."
+            )
         }
         self.assertEqual(response.json(), test_json)
 
     def test_patch_recipe_by_administrator(self):
-        """Обновление чужого рецепта администратором"""
-        recipe = Recipe.objects.create(
-            author=self.user,
-            name="тестовый рецепт",
-            image=self.uploaded_1,
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
+        """Обновление чужого рецепта администратором."""
+        recipe = self.recipe
         data = {
             "ingredients": [
                 {"id": self.ingredient_orange.id, "amount": 10},
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 21,
@@ -754,44 +800,31 @@ class RecipeTest(TestCase):
 
     def test_patch_recipe_404(self):
         """Обновление рецепта. Страница не найдена."""
-        recipe = Recipe.objects.create(
-            author=self.user,
-            name="тестовый рецепт",
-            image=self.uploaded_1,
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
         data = {
             "ingredients": [
                 {"id": self.ingredient_orange.id, "amount": 10},
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 21,
         }
-        url = f"/api/recipes/{recipe.id + 1}/"
+        count = Recipe.objects.count()
+        url = f"/api/recipes/{count + 1}/"
         response = self.authorized_client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         test_json = {"detail": "Страница не найдена."}
         self.assertEqual(response.json(), test_json)
 
     def test_patch_recipe_400_without_fields(self):
-        """Обновление рецепта.
-        Не указаны обязательные поля."""
-        recipe = Recipe.objects.create(
-            author=self.user,
-            name="тестовый рецепт",
-            image=self.uploaded_1,
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
+        """Обновление рецепта. Не указаны обязательные поля."""
+        recipe = self.recipe
         data = {}
         url = f"/api/recipes/{recipe.id}/"
         response = self.authorized_client.patch(url, data, format="json")
@@ -809,22 +842,18 @@ class RecipeTest(TestCase):
     def test_patch_recipe_400_negative_cookin_time(self):
         """Обновление рецепта. Ошибка валидации.
         Не валидное время готовки."""
-        recipe = Recipe.objects.create(
-            author=self.user,
-            name="тестовый рецепт",
-            image=self.uploaded_1,
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
+        recipe = self.recipe
         data = {
             "ingredients": [
                 {"id": self.ingredient_orange.id, "amount": 10},
                 {"id": self.ingredient_jam.id, "amount": 30},
             ],
             "tags": [self.tag_breakfast.id, self.tag_dinner.id],
-            "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+            "image": (
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMA"
+                + "AABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAO"
+                + "xAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
+            ),
             "name": "обновленный тестовый рецепт",
             "text": "обновленное описание тестового рецепта",
             "cooking_time": 0,
@@ -841,21 +870,15 @@ class RecipeTest(TestCase):
 
     def test_delete_recipe(self):
         """Удаление рецепта."""
-        recipe = Recipe.objects.create(
-            author=self.user,
-            name="тестовый рецепт",
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
+        recipe = self.recipe
         url = f"/api/recipes/{recipe.id}/"
         response = self.authorized_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_recipe_404(self):
         """Удаление рецепта.Страница не найдена."""
-        url = f"/api/recipes/{self.recipe.id + 1}/"
+        count = Recipe.objects.count()
+        url = f"/api/recipes/{count + 1}/"
         response = self.authorized_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -867,34 +890,23 @@ class RecipeTest(TestCase):
 
     def test_delete_recipe_not_author_403(self):
         """Удаление чужого рецепта."""
-        user = User.objects.create(username="test_user_recipe")
-        recipe = Recipe.objects.create(
-            author=user,
-            name="тестовый рецепт",
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
+        test_user = self.test_user
+        test_user_client = APIClient()
+        test_user_client.force_authenticate(test_user)
+        recipe = self.recipe
         url = f"/api/recipes/{recipe.id}/"
-        response = self.authorized_client.delete(url)
+        response = test_user_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         test_json = {
-            "detail": "У вас недостаточно прав для выполнения данного действия."
+            "detail": (
+                "У вас недостаточно прав для выполнения данного действия."
+            )
         }
         self.assertEqual(response.json(), test_json)
 
     def test_delete_recipe_by_administrator(self):
         """Удаление чужого рецепта администратором."""
-        user = User.objects.create(username="test_user_recipe")
-        recipe = Recipe.objects.create(
-            author=user,
-            name="тестовый рецепт",
-            text="описание тестового рецепта",
-            cooking_time=4,
-        )
-        recipe.tags.add(self.tag_breakfast)
-        recipe.ingredients.add(self.ingredientamount_orange)
+        recipe = self.recipe
         url = f"/api/recipes/{recipe.id}/"
         response = self.admin_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -907,7 +919,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.json().get("is_favorited"))
         test_json = {
-            "id": 1,
+            "id": 2,
             "tags": [
                 {
                     "id": 1,
@@ -930,18 +942,12 @@ class RecipeTest(TestCase):
                     "name": "test апельсин",
                     "measurement_unit": "шт.",
                     "amount": 5,
-                },
-                {
-                    "id": 2,
-                    "name": "test варенье",
-                    "measurement_unit": "ложка",
-                    "amount": 1,
-                },
+                }
             ],
             "is_favorited": True,
             "is_in_shopping_cart": False,
-            "name": "test рецепт",
-            "image": "http://testserver/media/recipes/images/small.gif",
+            "name": "тестовый рецепт",
+            "image": "http://testserver/media/recipes/images/small_1.gif",
             "text": "описание тестового рецепта",
             "cooking_time": 4,
         }
@@ -955,7 +961,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(response.json().get("is_favorited"))
         test_json = {
-            "id": 1,
+            "id": 2,
             "tags": [
                 {
                     "id": 1,
@@ -978,25 +984,19 @@ class RecipeTest(TestCase):
                     "name": "test апельсин",
                     "measurement_unit": "шт.",
                     "amount": 5,
-                },
-                {
-                    "id": 2,
-                    "name": "test варенье",
-                    "measurement_unit": "ложка",
-                    "amount": 1,
-                },
+                }
             ],
             "is_favorited": False,
             "is_in_shopping_cart": False,
-            "name": "test рецепт",
-            "image": "http://testserver/media/recipes/images/small.gif",
+            "name": "тестовый рецепт",
+            "image": "http://testserver/media/recipes/images/small_1.gif",
             "text": "описание тестового рецепта",
             "cooking_time": 4,
         }
         self.assertEqual(response.json(), test_json)
 
     def test_recipe_list_get_is_favorited_authorized_client(self):
-        """Проверка метода get_is_favorited при get запросе списка
+        """Проверка метода get_is_favorited при get запросе списка.
         рецептов авторизованным пользователем."""
         Favorite.objects.create(user=self.user, recipe=self.recipe)
         Recipe.objects.create(
@@ -1009,12 +1009,12 @@ class RecipeTest(TestCase):
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
-            "count": 2,
+            "count": 3,
             "next": None,
             "previous": None,
             "results": [
                 {
-                    "id": 2,
+                    "id": 3,
                     "tags": [],
                     "author": {
                         "email": "",
@@ -1029,6 +1029,41 @@ class RecipeTest(TestCase):
                     "is_in_shopping_cart": False,
                     "name": "тестовый рецепт",
                     "image": None,
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+                {
+                    "id": 2,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        }
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [
+                        {
+                            "id": 1,
+                            "name": "test апельсин",
+                            "measurement_unit": "шт.",
+                            "amount": 5,
+                        }
+                    ],
+                    "is_favorited": True,
+                    "is_in_shopping_cart": False,
+                    "name": "тестовый рецепт",
+                    "image": (
+                        "http://testserver/media/recipes/images/small_1.gif"
+                    ),
                     "text": "описание тестового рецепта",
                     "cooking_time": 4,
                 },
@@ -1064,10 +1099,12 @@ class RecipeTest(TestCase):
                             "amount": 1,
                         },
                     ],
-                    "is_favorited": True,
+                    "is_favorited": False,
                     "is_in_shopping_cart": False,
                     "name": "test рецепт",
-                    "image": "http://testserver/media/recipes/images/small.gif",
+                    "image": (
+                        "http://testserver/media/recipes/images/small.gif"
+                    ),
                     "text": "описание тестового рецепта",
                     "cooking_time": 4,
                 },
@@ -1078,7 +1115,7 @@ class RecipeTest(TestCase):
     def test_add_recipe_to_favorites_authorized_client(self):
         """Добавить рецепт в избранное авторизованным пользователем."""
         count = Favorite.objects.count()
-        url = f"/api/recipes/{self.recipe.id}/favorite/"
+        url = f"/api/recipes/{self.recipe_breakfast.id}/favorite/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Favorite.objects.count(), count + 1)
@@ -1091,7 +1128,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_add_recipe_to_favorites_guest_client(self):
-        """Нельзя добавить рецепт в избранное неавторизованным пользователем."""
+        """Нельзя добавить рецепт в избранное анонимом."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
         response = self.guest_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -1099,7 +1136,8 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_add_recipe_to_favorites_authorized_client_400(self):
-        """Нельзя повторно добавить рецепт в избранное авторизованным пользователем."""
+        """Нельзя повторно добавить рецепт в избранное авторизованным.
+        пользователем."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1117,7 +1155,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_recipe_to_favorites_guest_client(self):
-        """Нельзя удалить рецепт из избранного неавторизованным пользователем."""
+        """Нельзя удалить рецепт из избранного анонимом."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1127,7 +1165,8 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_delete_recipe_to_favorites_authorized_client_400(self):
-        """Нельзя повторно удалить рецепт из избранного авторизованным пользователем."""
+        """Нельзя повторно удалить рецепт из избранного авторизованным.
+        пользователем."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1140,8 +1179,11 @@ class RecipeTest(TestCase):
 
     def test_recipe_detail_shopping_cart_authorized_client(self):
         """Проверка метода shopping_cart авторизованным пользователем."""
-        ShoppingCart.objects.create(user=self.user, recipe=self.recipe)
-        url = f"/api/recipes/{self.recipe.id}/"
+        ShoppingCart.objects.create(
+            user=self.user,
+            recipe=self.recipe_breakfast,
+        )
+        url = f"/api/recipes/{self.recipe_breakfast.id}/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.json().get("is_in_shopping_cart"))
@@ -1187,9 +1229,10 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_recipe_detail_get_is_in_shopping_cart_guest_client(self):
-        """Проверка метода get_is_in_shopping_cart неавторизованным пользователем."""
-        ShoppingCart.objects.create(user=self.user, recipe=self.recipe)
-        url = f"/api/recipes/{self.recipe.id}/"
+        """Проверка метода get_is_in_shopping_cart анонимом."""
+        recipe = self.recipe_breakfast
+        ShoppingCart.objects.create(user=self.user, recipe=recipe)
+        url = f"/api/recipes/{recipe.id}/"
         response = self.guest_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(response.json().get("is_in_shopping_cart"))
@@ -1248,12 +1291,12 @@ class RecipeTest(TestCase):
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_json = {
-            "count": 2,
+            "count": 3,
             "next": None,
             "previous": None,
             "results": [
                 {
-                    "id": 2,
+                    "id": 3,
                     "tags": [],
                     "author": {
                         "email": "",
@@ -1268,6 +1311,41 @@ class RecipeTest(TestCase):
                     "is_in_shopping_cart": False,
                     "name": "тестовый рецепт",
                     "image": None,
+                    "text": "описание тестового рецепта",
+                    "cooking_time": 4,
+                },
+                {
+                    "id": 2,
+                    "tags": [
+                        {
+                            "id": 1,
+                            "name": "test Завтрак",
+                            "color": "#6AA84FFF",
+                            "slug": "breakfast",
+                        }
+                    ],
+                    "author": {
+                        "email": "",
+                        "id": 1,
+                        "username": "authorized_user",
+                        "first_name": "",
+                        "last_name": "",
+                        "is_subscribed": False,
+                    },
+                    "ingredients": [
+                        {
+                            "id": 1,
+                            "name": "test апельсин",
+                            "measurement_unit": "шт.",
+                            "amount": 5,
+                        }
+                    ],
+                    "is_favorited": False,
+                    "is_in_shopping_cart": True,
+                    "name": "тестовый рецепт",
+                    "image": (
+                        "http://testserver/media/recipes/images/small_1.gif"
+                    ),
                     "text": "описание тестового рецепта",
                     "cooking_time": 4,
                 },
@@ -1304,9 +1382,11 @@ class RecipeTest(TestCase):
                         },
                     ],
                     "is_favorited": False,
-                    "is_in_shopping_cart": True,
+                    "is_in_shopping_cart": False,
                     "name": "test рецепт",
-                    "image": "http://testserver/media/recipes/images/small.gif",
+                    "image": (
+                        "http://testserver/media/recipes/images/small.gif"
+                    ),
                     "text": "описание тестового рецепта",
                     "cooking_time": 4,
                 },
@@ -1317,7 +1397,7 @@ class RecipeTest(TestCase):
     def test_add_recipe_to_shopping_cart_authorized_client(self):
         """Добавить рецепт в корзину авторизованным пользователем."""
         count = ShoppingCart.objects.count()
-        url = f"/api/recipes/{self.recipe.id}/shopping_cart/"
+        url = f"/api/recipes/{self.recipe_breakfast.id}/shopping_cart/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ShoppingCart.objects.count(), count + 1)
@@ -1338,7 +1418,8 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_add_recipe_in_shopping_cart_authorized_client_400(self):
-        """Нельзя повторно добавить рецепт в корзину авторизованным пользователем."""
+        """Нельзя повторно добавить рецепт в корзину авторизованным.
+        пользователем."""
         url = f"/api/recipes/{self.recipe.id}/shopping_cart/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1366,7 +1447,8 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_delete_recipe_in_shopping_cart_authorized_client_400(self):
-        """Нельзя повторно удалить рецепт из корзины авторизованным пользователем."""
+        """Нельзя повторно удалить рецепт из корзины авторизованным.
+        пользователем."""
         url = f"/api/recipes/{self.recipe.id}/shopping_cart/"
         response = self.authorized_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -1379,9 +1461,7 @@ class RecipeTest(TestCase):
 
     def test_download_shopping_cart(self):
         """Скачать список покупок."""
-        test_user = User.objects.create_user(
-            username="test_user",
-        )
+        test_user = self.test_user
         recipe = Recipe.objects.create(
             author=test_user,
             name="test recipe 1",
@@ -1389,25 +1469,25 @@ class RecipeTest(TestCase):
             text="text test recipe 1",
             cooking_time=4,
         )
-        ingredient_1 = Ingredient.objects.create(
+        ingredient_jam = Ingredient.objects.create(
             name="jam",
             measurement_unit="spoon",
         )
-        ingredient_2 = Ingredient.objects.create(
+        ingredient_cucumber = Ingredient.objects.create(
             name="cucumber",
             measurement_unit="spoon",
         )
-        ingredientamount_1 = IngredientAmount.objects.create(
-            ingredient=ingredient_1,
+        ingredientamount_jam = IngredientAmount.objects.create(
+            ingredient=ingredient_jam,
             amount=5,
         )
-        ingredientamount_2 = IngredientAmount.objects.create(
-            ingredient=ingredient_2,
+        ingredientamount_cucumber = IngredientAmount.objects.create(
+            ingredient=ingredient_cucumber,
             amount=3,
         )
         recipe.ingredients.add(
-            ingredientamount_1,
-            ingredientamount_2,
+            ingredientamount_jam,
+            ingredientamount_cucumber,
         )
         ShoppingCart.objects.create(
             user=self.user,
@@ -1420,21 +1500,21 @@ class RecipeTest(TestCase):
             text="text test recipe 2",
             cooking_time=4,
         )
-        ingredient_3 = Ingredient.objects.create(
+        ingredient_ketchup = Ingredient.objects.create(
             name="ketchup",
             measurement_unit="spoon",
         )
-        ingredientamount_3 = IngredientAmount.objects.create(
-            ingredient=ingredient_3,
+        ingredientamount_ketchup = IngredientAmount.objects.create(
+            ingredient=ingredient_ketchup,
             amount=2,
         )
-        ingredientamount_4 = IngredientAmount.objects.create(
-            ingredient=ingredient_1,
+        ingredientamount_jam_10 = IngredientAmount.objects.create(
+            ingredient=ingredient_jam,
             amount=10,
         )
         recipe.ingredients.add(
-            ingredientamount_3,
-            ingredientamount_4,
+            ingredientamount_ketchup,
+            ingredientamount_jam_10,
         )
         ShoppingCart.objects.create(
             user=self.user,
@@ -1443,7 +1523,10 @@ class RecipeTest(TestCase):
         url = "/api/recipes/download_shopping_cart/"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        test_text = b"jam (spoon) - 10 \ncucumber (spoon) - 3 \nketchup (spoon) - 2 \n"
+        test_text = (
+            b"jam (spoon) - 10 \ncucumber (spoon) "
+            b"- 3 \nketchup (spoon) - 2 \n"
+        )
         self.assertEqual(response.getvalue(), test_text)
 
     def test_download_shopping_cart_unauthorized_user(self):
@@ -1484,7 +1567,7 @@ class RecipeTest(TestCase):
 
     def test_get_recipes_filter_by_tags(self):
         """Фильтрация рецептов по тегам."""
-        test_user = User.objects.create(username="test_user")
+        test_user = self.test_user
         recipe_1 = Recipe.objects.create(
             author=test_user,
             name="тестовый рецепт тег 1",
@@ -1512,7 +1595,12 @@ class RecipeTest(TestCase):
         url = f"/api/recipes/?tags={self.tag_breakfast.slug}"
         response = self.authorized_client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        tag_recipes_id = [recipe_1.id, recipe_3.id, self.recipe.id]
+        tag_recipes_id = [
+            recipe_1.id,
+            recipe_3.id,
+            self.recipe_breakfast.id,
+            self.recipe.id,
+        ]
         test_recipes_id = [
             recipe["id"] for recipe in response.json()["results"]
         ]
@@ -1619,9 +1707,7 @@ class RecipeTest(TestCase):
             sorted(shoppingcart_recipes_id), sorted(test_recipes_id)
         )
 
-    def test_get_recipes_filter_by_is_in_shopping_cart_unauthorized_user(
-        self,
-    ):
+    def test_get_recipes_filter_by_is_in_shopping_cart_anonymous(self):
         """Фильтрация рецептов по списку покупок анонимным пользователем."""
         test_user = User.objects.create(username="test_user")
         recipe_1 = Recipe.objects.create(
