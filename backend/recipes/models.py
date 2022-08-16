@@ -99,7 +99,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = "-id"
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
 
@@ -121,7 +121,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = "-id"
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
         constraints = [
@@ -150,7 +150,7 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = "-id"
         verbose_name = "Корзина"
         verbose_name_plural = "В корзине"
         constraints = [
