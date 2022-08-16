@@ -143,12 +143,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-    def create(self, validated_data):
-        tags_data = validated_data.pop("tags")
-        ingredients_data = validated_data.pop("ingredients")
-        recipe = Recipe.objects.create(**validated_data)
+    def _add_tags_and_ingredients(self, recipe, tags_data, ingredients_data):
         recipe.tags.set(tags_data)
-
         ingredient_amounts = []
         for item in ingredients_data:
             ingredient = item.get("ingredient")
@@ -161,6 +157,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         recipe.ingredients.set(ingredient_amounts)
         return recipe
 
+    def create(self, validated_data):
+        tags_data = validated_data.pop("tags")
+        ingredients_data = validated_data.pop("ingredients")
+        recipe = Recipe.objects.create(**validated_data)
+        return self._add_tags_and_ingredients(
+            recipe, tags_data, ingredients_data
+        )
+
     def update(self, instance, validated_data):
         instance.ingredients.clear()
         instance.tags.clear()
@@ -169,16 +173,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
-
-        instance.tags.set(tags_data)
-        ingredient_amounts = []
-        for item in ingredients_data:
-            ingredient = item.get("ingredient")
-            amount = item.get("amount")
-            ingredient_amount, _ = IngredientAmount.objects.get_or_create(
-                ingredient=ingredient,
-                amount=amount,
-            )
-            ingredient_amounts.append(ingredient_amount)
-        instance.ingredients.set(ingredient_amounts)
-        return instance
+        return self._add_tags_and_ingredients(
+            instance, tags_data, ingredients_data
+        )
