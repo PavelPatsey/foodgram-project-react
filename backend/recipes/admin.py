@@ -26,7 +26,11 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientAmount)
 class IngredientAmountAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "pk",
+        "ingredient",
+        "amount",
+    )
 
 
 @admin.register(Recipe)
@@ -48,9 +52,17 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "pk",
+        "user",
+        "recipe",
+    )
 
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "pk",
+        "user",
+        "recipe",
+    )

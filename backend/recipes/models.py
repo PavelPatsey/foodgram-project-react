@@ -69,7 +69,7 @@ class IngredientAmount(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Ингредиент",
     )
-    amount = models.IntegerField(verbose_name="Количество")
+    amount = models.PositiveIntegerField(verbose_name="Количество")
 
     class Meta:
         verbose_name = "Количество ингридиента"
