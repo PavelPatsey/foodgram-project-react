@@ -14,16 +14,22 @@ class RecipeFilter(FilterSet):
         method="get_is_in_shopping_cart"
     )
 
+    def if_user_is_anonymous(func):
+        def check_user(self, queryset, name, value, *args, **kwargs):
+            if self.request.user.is_anonymous:
+                return queryset.none()
+            return func(self, queryset, name, value, *args, **kwargs)
+
+        return check_user
+
+    @if_user_is_anonymous
     def get_is_favorited(self, queryset, name, value):
-        if self.request.user.is_anonymous:
-            return queryset.none()
         if value:
             return queryset.filter(favorites__user=self.request.user)
         return queryset
 
+    @if_user_is_anonymous
     def get_is_in_shopping_cart(self, queryset, name, value):
-        if self.request.user.is_anonymous:
-            return queryset.none()
         if value:
             return queryset.filter(shoppingcart__user=self.request.user)
         return queryset
