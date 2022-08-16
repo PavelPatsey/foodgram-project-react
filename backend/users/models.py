@@ -28,7 +28,7 @@ class Subscription(models.Model):
                     "user",
                     "author",
                 ),
-                name="unique_user_author_subscription",
+                name="unique_subscription_user_author",
             ),
             models.CheckConstraint(
                 check=~models.Q(user=models.F("author")),
