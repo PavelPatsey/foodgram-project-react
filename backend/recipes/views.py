@@ -125,19 +125,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             model = ShoppingCart
             error_data = {"errors": "Рецепт уже добавлен в корзину"}
             return self._do_post_method(request, model, error_data)
-
         if request.method == "DELETE":
-            user = request.user
-            recipe = self.get_object()
-            favorite = ShoppingCart.objects.filter(
-                user=user,
-                recipe=recipe,
-            )
-            if favorite.exists():
-                favorite.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            data = {"errors": "Рецепт уже удален из корзины"}
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            model = ShoppingCart
+            error_data = {"errors": "Рецепт уже удален из корзины"}
+            return self._do_delete_method(request, model, error_data)
 
     @action(
         detail=False,
