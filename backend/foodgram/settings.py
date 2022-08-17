@@ -20,7 +20,7 @@ ALLOWED_HOSTS = [
 
 # ALLOWED_HOSTS = ["*", "testserver"]
 
-CSRF_TRUSTED_ORIGINS = ["http://130.193.41.48/*", "*"]
+CSRF_TRUSTED_ORIGINS = ["http://130.193.41.48/*", "http://*", "https://*"]
 
 
 INSTALLED_APPS = [
