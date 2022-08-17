@@ -10,16 +10,17 @@ SECRET_KEY = os.getenv("SECRET_KEY", default="django-insecure-123")
 
 DEBUG = True
 
-# ALLOWED_HOSTS = [
-#     "localhost",
-#     "127.0.0.1",
-#     "testserver",
-#     "backend",
-# ]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "130.193.41.48",
+    "testserver",
+    "backend",
+]
 
-ALLOWED_HOSTS = ["*", "testserver"]
+# ALLOWED_HOSTS = ["*", "testserver"]
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost/*"]
+CSRF_TRUSTED_ORIGINS = ["http://130.193.41.48/*"]
 
 
 INSTALLED_APPS = [
