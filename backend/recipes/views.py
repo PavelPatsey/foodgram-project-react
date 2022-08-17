@@ -118,6 +118,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             model = Favorite
             error_data = {"errors": "Рецепт уже удален из избранного"}
             return self._do_delete_method(request, model, error_data)
+        return
 
     @action(detail=True, methods=["post", "delete"])
     def shopping_cart(self, request, pk=None):
@@ -129,6 +130,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             model = ShoppingCart
             error_data = {"errors": "Рецепт уже удален из корзины"}
             return self._do_delete_method(request, model, error_data)
+        return
 
     @action(
         detail=False,
