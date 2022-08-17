@@ -8,9 +8,8 @@ services:
       - ./.env
   
   frontend:
-    build:
-      image: pavelpatsey/foodgram_frontend:1
-      restart: always
+    image: pavelpatsey/foodgram_frontend:1
+    restart: always
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
@@ -31,9 +30,7 @@ services:
       - frontend
   
   backend:
-    build:
-      image: pavelpatsey/foodgram_backend:1
-      restart: always
+    image: pavelpatsey/foodgram_backend:1
     restart: always
     volumes:
       - static_value:/app_backend/static_backend/
