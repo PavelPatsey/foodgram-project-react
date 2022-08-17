@@ -1,11 +1,8 @@
 import os
+import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-load_dotenv(BASE_DIR / "../.env")
 
 
 SECRET_KEY = os.getenv(
@@ -16,14 +13,14 @@ SECRET_KEY = os.getenv(
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "testserver",
-    "backend",
-]
+# ALLOWED_HOSTS = [
+#     "localhost",
+#     "127.0.0.1",
+#     "testserver",
+#     "backend",
+# ]
 
-# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", "testserver"]
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost/*"]
 
@@ -74,27 +71,27 @@ TEMPLATES = [
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
 # DATABASES = {
 #     "default": {
-#         "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
-#         'NAME': os.getenv('DB_NAME', default='postgres'),
-#         'USER': os.getenv('POSTGRES_USER', default='user'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='password'),
-#         'HOST': os.getenv('DB_HOST', default='127.0.0.1'),
-#         'PORT': os.getenv('DB_PORT', default='5432'),
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
 
-# if "test" in sys.argv:
-#     DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
-#     DATABASES["default"]["NAME"] = ":memory:"
+DATABASES = {
+    "default": {
+        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.getenv("DB_NAME", default="postgres"),
+        "USER": os.getenv("POSTGRES_USER", default="user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", default="password"),
+        "HOST": os.getenv("DB_HOST", default="127.0.0.1"),
+        "PORT": os.getenv("DB_PORT", default="5432"),
+    }
+}
+
+if "test" in sys.argv:
+    DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
+    DATABASES["default"]["NAME"] = ":memory:"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
