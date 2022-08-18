@@ -56,8 +56,22 @@ class Command(BaseCommand):
             cooking_time=60,
         )
 
-        recipe_lemonade.image = "data/image_lemonade.png"
+        # recipe_lemonade.image = "data/image_lemonade.png"
+        # recipe_lemonade.save()
+
+        import base64
+
+        from django.core.files.base import ContentFile
+
+        with open("data/lemonade_base64code") as file:
+            imgstr = file.read().strip()
+
+        data = ContentFile(
+            base64.b64decode(imgstr), name="temp." + "lemonade"
+        )
+        recipe_lemonade.image = data
         recipe_lemonade.save()
+        # Test.objects.create(image=data)
 
         recipe_lemonade.tags.add(tag_drinks)
 
