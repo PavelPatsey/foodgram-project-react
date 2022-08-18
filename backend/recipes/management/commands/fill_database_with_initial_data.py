@@ -36,12 +36,12 @@ class Command(BaseCommand):
 
         tag_drinks = Tag.objects.create(
             name="Напитки",
-            color="#0000ff",
+            color="#c69d21",
             slug="drinks",
         )
         tag_baked_goods = Tag.objects.create(
             name="Выпечка",
-            color="#f5f5dc",
+            color="#874e24",
             slug="baked_goods",
         )
 
