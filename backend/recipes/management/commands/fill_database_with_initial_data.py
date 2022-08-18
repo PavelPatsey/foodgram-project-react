@@ -71,29 +71,32 @@ class Command(BaseCommand):
             amount=2,
         )
         # Мята перечная свежая - 6 веточек
-        ingredient_peppermint = Ingredient.objects.get_or_create(
+        ingredient_peppermint, _ = Ingredient.objects.get_or_create(
             name="мята перечная свежая",
             measurement_unit="веточка",
         )
-        ingredientamount_peppermint = IngredientAmount.objects.get_or_create(
+        (
+            ingredientamount_peppermint,
+            _,
+        ) = IngredientAmount.objects.get_or_create(
             ingredient=ingredient_peppermint,
             amount=6,
         )
         # Сахар - 125 г
-        ingredient_sugar = Ingredient.objects.get_or_create(
+        ingredient_sugar, _ = Ingredient.objects.get_or_create(
             name="сахар",
             measurement_unit="г",
         )
-        ingredientamount_sugar = IngredientAmount.objects.get_or_create(
+        ingredientamount_sugar, _ = IngredientAmount.objects.get_or_create(
             ingredient=ingredient_sugar,
             amount=125,
         )
         # Вода - 2,5 л
-        ingredient_water = Ingredient.objects.get_or_create(
+        ingredient_water, _ = Ingredient.objects.get_or_create(
             name="вода",
             measurement_unit="г",
         )
-        ingredientamount_water = IngredientAmount.objects.get_or_create(
+        ingredientamount_water, _ = IngredientAmount.objects.get_or_create(
             ingredient=ingredient_water,
             amount=2500,
         )
