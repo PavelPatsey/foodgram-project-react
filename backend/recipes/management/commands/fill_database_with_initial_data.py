@@ -67,7 +67,7 @@ class Command(BaseCommand):
             imgstr = file.read().strip()
 
         data = ContentFile(
-            base64.b64decode(imgstr), name="temp." + "lemonade"
+            base64.b64decode(imgstr), name="lemonade." + "png"
         )
         recipe_lemonade.image = data
         recipe_lemonade.save()
