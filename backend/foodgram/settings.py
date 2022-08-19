@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", default="django-insecure-123")
 
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -17,8 +17,6 @@ ALLOWED_HOSTS = [
     "testserver",
     "backend",
 ]
-
-# ALLOWED_HOSTS = ["*", "testserver"]
 
 CSRF_TRUSTED_ORIGINS = ["http://130.193.41.48/*", "http://*", "https://*"]
 
@@ -68,13 +66,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 DATABASES = {
     "default": {
