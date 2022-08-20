@@ -68,13 +68,17 @@ scp -r docs <username>@<ip host>@130.193.41.48:/home/<username>/
   
 
 * После успешного развертывания проекта на удаленном сервере, можно выполнить:
-    - Заполнить БД начальными данными (необязательно):  
-    ```
-    sudo docker-compose exec backend python3 manage.py fill_database_with_initial_data
-    ```
     - Создать суперпользователя Django:
     ```
     sudo docker-compose exec backend python manage.py createsuperuser
+    ```
+    - Импортровать в БД ингредиенты, чтобы пользователи могли ими пользоваться при создании рецептов:  
+    ```
+    sudo docker-compose exec backend python3 manage.py import_ingredients
+    ```
+    - Заполнить БД начальными данными (необязательно):  
+    ```
+    sudo docker-compose exec backend python3 manage.py fill_database_with_initial_data
     ```
     - Проект будет доступен по IP вашего сервера.
   
