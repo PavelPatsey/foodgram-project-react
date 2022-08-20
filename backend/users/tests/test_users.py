@@ -282,9 +282,24 @@ class UsersViewsTest(TestCase):
         }
         self.assertEqual(response.json(), test_json)
 
+    def test_user_profileby_by_authorized_user(self):
+        """Профиль пользователя, авторизованным пользователем."""
+        user = self.user_vasya
+        url = f"/api/users/{user.id}/"
+        response = self.authorized_client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_json = {
+            "email": "vasya_pupkin@mail.com",
+            "id": 3,
+            "username": "vasya_pupkin",
+            "first_name": "Vasya",
+            "last_name": "Pupkin",
+            "is_subscribed": True,
+        }
+        self.assertEqual(response.json(), test_json)
+
     def test_user_profile_by_unauthorized_user(self):
-        """Профиль пользователя.
-        Учетные данные не были предоставлены."""
+        """Профиль пользователя. Учетные данные не были предоставлены."""
         user = self.user_vasya
         url = f"/api/users/{user.id}/"
         response = self.guest_client.get(url)
