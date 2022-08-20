@@ -30,6 +30,8 @@ class RecipeTest(TestCase):
         cls.admin_client.force_authenticate(cls.admin_user)
 
         cls.test_user = User.objects.create_user(username="testusername")
+        cls.test_client = APIClient()
+        cls.test_client.force_authenticate(cls.test_user)
 
         cls.ingredient_orange = Ingredient.objects.create(
             name="test апельсин",
@@ -482,8 +484,7 @@ class RecipeTest(TestCase):
         self.assertEqual(response.json(), test_json)
 
     def test_create_recipe_without_text(self):
-        """Создание рецепта.
-        Описание рецепта обязательное поле."""
+        """Создание рецепта. Описание рецепта обязательное поле."""
         url = "/api/recipes/"
         data = {
             "ingredients": [
@@ -1116,7 +1117,7 @@ class RecipeTest(TestCase):
         """Добавить рецепт в избранное авторизованным пользователем."""
         count = Favorite.objects.count()
         url = f"/api/recipes/{self.recipe_breakfast.id}/favorite/"
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Favorite.objects.count(), count + 1)
         test_json = {
@@ -1139,9 +1140,9 @@ class RecipeTest(TestCase):
         """Нельзя повторно добавить рецепт в избранное авторизованным.
         пользователем."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         test_json = {"errors": "Рецепт уже добавлен в избранное"}
         self.assertEqual(response.json(), test_json)
@@ -1149,9 +1150,9 @@ class RecipeTest(TestCase):
     def test_delete_recipe_to_favorites_authorized_client(self):
         """Удалить рецепт из избранного авторизованным пользователем."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.authorized_client.delete(url)
+        response = self.test_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_recipe_to_favorites_guest_client(self):
@@ -1168,11 +1169,11 @@ class RecipeTest(TestCase):
         """Нельзя повторно удалить рецепт из избранного авторизованным.
         пользователем."""
         url = f"/api/recipes/{self.recipe.id}/favorite/"
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.authorized_client.delete(url)
+        response = self.test_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        response = self.authorized_client.delete(url)
+        response = self.test_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         test_json = {"errors": "Рецепт уже удален из избранного"}
         self.assertEqual(response.json(), test_json)
@@ -1398,7 +1399,7 @@ class RecipeTest(TestCase):
         """Добавить рецепт в корзину авторизованным пользователем."""
         count = ShoppingCart.objects.count()
         url = f"/api/recipes/{self.recipe_breakfast.id}/shopping_cart/"
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ShoppingCart.objects.count(), count + 1)
         test_json = {
@@ -1421,9 +1422,9 @@ class RecipeTest(TestCase):
         """Нельзя повторно добавить рецепт в корзину авторизованным.
         пользователем."""
         url = f"/api/recipes/{self.recipe.id}/shopping_cart/"
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         test_json = {"errors": "Рецепт уже добавлен в корзину"}
         self.assertEqual(response.json(), test_json)
@@ -1431,9 +1432,9 @@ class RecipeTest(TestCase):
     def test_delete_recipe_in_shopping_cart_authorized_client(self):
         """Удалить рецепт из корзины авторизованным пользователем."""
         url = f"/api/recipes/{self.recipe.id}/shopping_cart/"
-        response = self.authorized_client.post(url)
+        response = self.test_client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.authorized_client.delete(url)
+        response = self.test_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_recipe_in_shopping_cart_guest_client(self):

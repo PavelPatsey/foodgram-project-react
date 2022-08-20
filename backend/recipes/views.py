@@ -108,7 +108,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=["post", "delete"])
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        permission_classes=[IsAuthenticated],
+    )
     def favorite(self, request, pk=None):
         if request.method == "POST":
             model = Favorite
@@ -118,7 +122,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         error_data = {"errors": "Рецепт уже удален из избранного"}
         return self._do_delete_method(request, model, error_data)
 
-    @action(detail=True, methods=["post", "delete"])
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        permission_classes=[IsAuthenticated],
+    )
     def shopping_cart(self, request, pk=None):
         if request.method == "POST":
             model = ShoppingCart
