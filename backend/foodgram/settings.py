@@ -4,9 +4,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = os.getenv("SECRET_KEY", default="django-insecure-123")
-
 
 DEBUG = False
 
@@ -82,8 +80,6 @@ if "test" in sys.argv:
     DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
     DATABASES["default"]["NAME"] = ":memory:"
 
-# Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
