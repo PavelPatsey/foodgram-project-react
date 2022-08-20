@@ -61,10 +61,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(
-            data=request.data,
-        )
+
+        data = request.data
+        if not request.data.get("image"):
+            base64code = (
+                "R0lGODlhAgABAIAAAAAAAP///yH5BAAAAAAALAAAAAACAAEAAAICDAoAOw=="
+            )
+            data["image"] = base64code
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
+
         serializer = self.get_serializer(
             instance=instance,
             data=request.data,
