@@ -28,10 +28,14 @@ sudo apt install docker.io
 ```
 * Установите docker-compose на сервер. [Установка и использование Docker Compose в Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04-ru)
 * Локально отредактируйте файл infra/nginx/default.conf.conf, в строке server_name впишите свой IP
-* Скопируйте файл docker-compose.yml и nginx.conf из папки infra на сервер:
+* Скопируйте файлы docker-compose.yml и nginx.conf из папки infra на сервер:
 ```
 scp infra/docker-compose.yml <username>@<ip host>:/home/<username>/docker-compose.yml
 scp infra/nginx.conf <username>@<ip host>:/home/<username>/nginx.conf
+```
+* Скопируйте папку docs на сервер:
+```
+scp -r docs <username>@<ip host>@130.193.41.48:/home/<username>/
 ```
 
 * Для работы с Workflow добавьте в Secrets GitHub переменные окружения для работы:
