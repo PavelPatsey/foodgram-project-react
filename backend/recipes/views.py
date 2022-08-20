@@ -1,3 +1,5 @@
+import copy
+
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
@@ -63,11 +65,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         data = request.data
+        data = copy.deepcopy(request.data)
         if not request.data.get("image"):
-            base64code = (
+            test_base64code = (
                 "R0lGODlhAgABAIAAAAAAAP///yH5BAAAAAAALAAAAAACAAEAAAICDAoAOw=="
             )
-            data["image"] = base64code
+            data["image"] = test_base64code
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
@@ -80,7 +83,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         instance = serializer.instance
         serializer = RecipeReadSerializer(
-            instance=instance, context={"request": request}
+            instance=instance,
+            context={"request": request},
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
