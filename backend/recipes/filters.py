@@ -14,6 +14,13 @@ class RecipeFilter(FilterSet):
         method="get_is_in_shopping_cart"
     )
 
+    class Meta:
+        model = Recipe
+        fields = (
+            "tags",
+            "author",
+        )
+
     def if_user_is_anonymous(func):
         def check_user(self, queryset, name, value, *args, **kwargs):
             if self.request.user.is_anonymous:
@@ -33,13 +40,6 @@ class RecipeFilter(FilterSet):
         if value:
             return queryset.filter(shoppingcart__user=self.request.user)
         return queryset
-
-    class Meta:
-        model = Recipe
-        fields = (
-            "tags",
-            "author",
-        )
 
 
 class IngredientSearchFilter(FilterSet):
