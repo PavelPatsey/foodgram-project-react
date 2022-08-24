@@ -41,13 +41,19 @@ class Command(BaseCommand):
         )
         tag_main_course = Tag.objects.create(
             name="Основное блюдо",
-            color="#bf9000",
+            # color="#bf9000",
+            color="#bc4105",
             slug="main_course",
         )
         tag_baked_goods = Tag.objects.create(
             name="Выпечка",
             color="#874e24",
             slug="baked_goods",
+        )
+        tag_soup = Tag.objects.create(
+            name="Суп",
+            color="#800020",
+            slug="soup",
         )
         tag_drinks = Tag.objects.create(
             name="Напитки",
@@ -360,6 +366,190 @@ class Command(BaseCommand):
             ingredientamount_eggs,
             ingredientamount_baking_powder,
             ingredientamount_cinnamon,
+        )
+
+        # Создание рецепта суп Борщ
+        with open("data/text_borsch") as file:
+            text_borsch = file.read().strip()
+        recipe_borsch = Recipe.objects.create(
+            author=author_pavel,
+            name="Борщ",
+            text=text_borsch,
+            cooking_time=120,
+        )
+
+        with open("data/base64code_borsch") as file:
+            imgstr = file.read().strip()
+        data = ContentFile(base64.b64decode(imgstr), name="borsch." + "png")
+        recipe_borsch.image = data
+        recipe_borsch.save()
+
+        recipe_borsch.tags.add(tag_soup)
+
+        # Говядина - 500 г
+        ingredient_beef, _ = Ingredient.objects.get_or_create(
+            name="говядина",
+            measurement_unit="г",
+        )
+        ingredientamount_beef, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_beef,
+            amount=500,
+        )
+        # Свёкла - 1 шт.
+        ingredient_beet, _ = Ingredient.objects.get_or_create(
+            name="свекла",
+            measurement_unit="шт.",
+        )
+        ingredientamount_beet, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_beet,
+            amount=1,
+        )
+        # Картофель - 2 шт.
+        ingredient_potato, _ = Ingredient.objects.get_or_create(
+            name="картофель",
+            measurement_unit="шт.",
+        )
+        ingredientamount_potato, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_potato,
+            amount=1,
+        )
+        # Капуста белокочанная - 200 г
+        ingredient_cabbage, _ = Ingredient.objects.get_or_create(
+            name="капуста белокочанная",
+            measurement_unit="г",
+        )
+        ingredientamount_cabbage, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cabbage,
+            amount=200,
+        )
+        # Морковь - 1 шт.
+        ingredient_carrot, _ = Ingredient.objects.get_or_create(
+            name="морковь",
+            measurement_unit="шт.",
+        )
+        ingredientamount_carrot, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_carrot,
+            amount=1,
+        )
+        # Лук репчатый - 1 шт.
+        ingredient_onion, _ = Ingredient.objects.get_or_create(
+            name="лук репчатый",
+            measurement_unit="шт.",
+        )
+        ingredientamount_onion, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_onion,
+            amount=1,
+        )
+        # Томатная паста - 1 ст. ложка
+        ingredient_tomato, _ = Ingredient.objects.get_or_create(
+            name="томатная паста",
+            measurement_unit="ст. ложка",
+        )
+        ingredientamount_tomato, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_tomato,
+            amount=1,
+        )
+        # Масло растительное - 2 ст. ложки
+        ingredient_oil, _ = Ingredient.objects.get_or_create(
+            name="масло растительное",
+            measurement_unit="ст. ложка",
+        )
+        ingredientamount_oil, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_oil,
+            amount=2,
+        )
+        # Уксус - 1 ч. ложка
+        ingredient_vinegar, _ = Ingredient.objects.get_or_create(
+            name="уксус",
+            measurement_unit="ч. ложка",
+        )
+        ingredientamount_vinegar, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_vinegar,
+            amount=1,
+        )
+        # Лавровый лист - 1 шт.
+        ingredient_laurel, _ = Ingredient.objects.get_or_create(
+            name="лавровый лист",
+            measurement_unit="шт.",
+        )
+        ingredientamount_laurel, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_laurel,
+            amount=1,
+        )
+        # Перец чёрный горошком - 2-3 шт.
+        ingredient_peppercorns, _ = Ingredient.objects.get_or_create(
+            name="перец чёрный горошком",
+            measurement_unit="шт.",
+        )
+        (
+            ingredientamount_peppercorns,
+            _,
+        ) = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_peppercorns,
+            amount=3,
+        )
+        # Соль - 2 ч. ложки (по вкусу)
+        ingredient_salt, _ = Ingredient.objects.get_or_create(
+            name="соль",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_salt, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_salt,
+            amount=1,
+        )
+        # Вода - 1,5 л
+        ingredient_water, _ = Ingredient.objects.get_or_create(
+            name="вода",
+            measurement_unit="мл",
+        )
+        ingredientamount_water, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_water,
+            amount=1500,
+        )
+        # Зелень укропа и/или петрушки (для подачи) - 3-4 веточки
+        ingredient_dill, _ = Ingredient.objects.get_or_create(
+            name="зелень укропа",
+            measurement_unit="веточка",
+        )
+        ingredientamount_dill, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_dill,
+            amount=1,
+        )
+        # Зелень укропа и/или петрушки (для подачи) - 3-4 веточки
+        ingredient_parsley, _ = Ingredient.objects.get_or_create(
+            name="зелень петрушки",
+            measurement_unit="веточка",
+        )
+        ingredientamount_parsley, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_parsley,
+            amount=1,
+        )
+        # Сметана (для подачи) - 2 ст. ложки
+        ingredient_sour, _ = Ingredient.objects.get_or_create(
+            name="сметана",
+            measurement_unit="ст. ложка",
+        )
+        ingredientamount_sour, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_sour,
+            amount=2,
+        )
+        recipe_borsch.ingredients.add(
+            ingredientamount_beef,
+            ingredientamount_beet,
+            ingredientamount_potato,
+            ingredientamount_cabbage,
+            ingredientamount_carrot,
+            ingredientamount_onion,
+            ingredientamount_tomato,
+            ingredientamount_oil,
+            ingredientamount_vinegar,
+            ingredientamount_laurel,
+            ingredientamount_peppercorns,
+            ingredientamount_salt,
+            ingredientamount_water,
+            ingredientamount_dill,
+            ingredientamount_parsley,
+            ingredientamount_sour,
         )
 
         # Создание рецепта напитки Лимонад
