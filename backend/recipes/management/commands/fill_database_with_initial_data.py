@@ -34,6 +34,11 @@ class Command(BaseCommand):
             email="lenaarhipova@mail.ru",
         )
 
+        tag_breakfast = Tag.objects.create(
+            name="Завтрак",
+            color="#f44336",
+            slug="breakfast",
+        )
         tag_drinks = Tag.objects.create(
             name="Напитки",
             color="#c69d21",
@@ -43,6 +48,125 @@ class Command(BaseCommand):
             name="Выпечка",
             color="#874e24",
             slug="baked_goods",
+        )
+
+        # Создание рецепта Завтрак Сэндвич "Крок Месье"
+        with open("data/text_sandwich") as file:
+            text_sandwich = file.read().strip()
+        recipe_sandwich = Recipe.objects.create(
+            author=author_lena,
+            name="Завтрак Сэндвич \"Крок Месье\"",
+            text=text_sandwich,
+            cooking_time=60,
+        )
+
+        with open("data/sandwich_base64code") as file:
+            imgstr = file.read().strip()
+        data = ContentFile(base64.b64decode(imgstr), name="sandwich." + "png")
+        recipe_sandwich.image = data
+        recipe_sandwich.save()
+
+        recipe_sandwich.tags.add(tag_breakfast)
+
+        # Лимоны - 2 шт.
+        ingredient_lemon, _ = Ingredient.objects.get_or_create(
+            name="лимоны",
+            measurement_unit="шт.",
+        )
+        ingredientamount_lemon, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_lemon,
+            amount=2,
+        )
+        # Хлеб (для тостов) — 8 шт
+        ingredient_bread, _ = Ingredient.objects.get_or_create(
+            name="хлеб (для тостов)",
+            measurement_unit="шт.",
+        )
+        ingredientamount_bread, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_bread,
+            amount=8,
+        )
+        # Ветчина (150 гр) — 4 шт
+        ingredient_ham, _ = Ingredient.objects.get_or_create(
+            name="ветчина",
+            measurement_unit="г",
+        )
+        ingredientamount_ham, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_ham,
+            amount=150,
+        )
+        # Сыр твердый (желательно эмменталь) — 90 г
+        ingredient_cheese, _ = Ingredient.objects.get_or_create(
+            name="сыр Эмменталь",
+            measurement_unit="г",
+        )
+        ingredientamount_cheese, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cheese,
+            amount=90,
+        )
+        # Молоко — 250 мл
+        ingredient_milk, _ = Ingredient.objects.get_or_create(
+            name="молоко",
+            measurement_unit="мл",
+        )
+        ingredientamount_milk, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_milk,
+            amount=250,
+        )
+        # Мука пшеничная / Мука — 1 ст. л.
+        ingredient_flour, _ = Ingredient.objects.get_or_create(
+            name="мука пшеничная",
+            measurement_unit="ст. л.",
+        )
+        ingredientamount_flour, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_flour,
+            amount=1,
+        )
+        # Масло сливочное — 20 г
+        ingredient_butter, _ = Ingredient.objects.get_or_create(
+            name="масло сливочное",
+            measurement_unit="г",
+        )
+        ingredientamount_butter, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_butter,
+            amount=20,
+        )
+        # соль - по вкусу
+        ingredient_salt, _ = Ingredient.objects.get_or_create(
+            name="соль",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_salt, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_salt,
+            amount=1,
+        )
+        # перец - по вкусу)
+        ingredient_pepper, _ = Ingredient.objects.get_or_create(
+            name="перец",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_pepper, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_pepper,
+            amount=1,
+        )
+        # Орех мускатный (на кончике ножа)
+        ingredient_nutmeg, _ = Ingredient.objects.get_or_create(
+            name="орех мускатный",
+            measurement_unit="на кончике ножа",
+        )
+        ingredientamount_nutmeg, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_nutmeg,
+            amount=1,
+        )
+        recipe_sandwich.ingredients.add(
+            ingredientamount_bread,
+            ingredientamount_ham,
+            ingredientamount_cheese,
+            ingredientamount_milk,
+            ingredientamount_flour,
+            ingredientamount_salt,
+            ingredientamount_pepper,
+            ingredientamount_nutmeg,
         )
 
         # Создание рецепта напитки Лимонад
@@ -96,7 +220,7 @@ class Command(BaseCommand):
         # Вода - 2,5 л
         ingredient_water, _ = Ingredient.objects.get_or_create(
             name="вода",
-            measurement_unit="г",
+            measurement_unit="мл",
         )
         ingredientamount_water, _ = IngredientAmount.objects.get_or_create(
             ingredient=ingredient_water,
