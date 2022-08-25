@@ -149,7 +149,7 @@ class Command(BaseCommand):
         with open("data/text_plum_cake") as file:
             text_plum_cake = file.read().strip()
         recipe_plum_cake = Recipe.objects.create(
-            author=author_pavel,
+            author=author_lena,
             name="Сливовый пирог",
             text=text_plum_cake,
             cooking_time=60,
@@ -249,6 +249,67 @@ class Command(BaseCommand):
             ingredientamount_eggs,
             ingredientamount_baking_powder,
             ingredientamount_cinnamon,
+        )
+
+        # Создание рецепта десерт Крем-брюле
+        with open("data/text_brulee") as file:
+            text_brulee = file.read().strip()
+        recipe_brulee = Recipe.objects.create(
+            author=author_pavel,
+            name="Крем-брюле",
+            text=text_brulee,
+            cooking_time=60,
+        )
+
+        with open("data/base64code_brulee") as file:
+            imgstr = file.read().strip()
+        data = ContentFile(base64.b64decode(imgstr), name="brulee." + "png")
+        recipe_brulee.image = data
+        recipe_brulee.save()
+
+        recipe_brulee.tags.add(tag_dessert)
+
+        # Яичные желтки - 4 шт.
+        ingredient_eggs, _ = Ingredient.objects.get_or_create(
+            name="яйца куриные",
+            measurement_unit="шт.",
+        )
+        ingredientamount_eggs, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_eggs,
+            amount=4,
+        )
+        # Сахар - 80 г
+        ingredient_sugar, _ = Ingredient.objects.get_or_create(
+            name="сахар",
+            measurement_unit="г",
+        )
+        ingredientamount_sugar, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_sugar,
+            amount=80,
+        )
+        # Сливки 33% - 500 мл
+        ingredient_cream, _ = Ingredient.objects.get_or_create(
+            name="сливки 33%",
+            measurement_unit="мл",
+        )
+        ingredientamount_cream, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cream,
+            amount=500,
+        )
+        # Ваниль - по вкусу
+        ingredient_vanilla, _ = Ingredient.objects.get_or_create(
+            name="ваниль",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_vanilla, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_vanilla,
+            amount=1,
+        )
+        recipe_brulee.ingredients.add(
+            ingredientamount_eggs,
+            ingredientamount_sugar,
+            ingredientamount_cream,
+            ingredientamount_vanilla,
         )
 
         # Создание рецепта Паста карбонара с беконом и сливками
@@ -530,7 +591,7 @@ class Command(BaseCommand):
         with open("data/text_sandwich") as file:
             text_sandwich = file.read().strip()
         recipe_sandwich = Recipe.objects.create(
-            author=author_lena,
+            author=author_pavel,
             name='Завтрак Сэндвич "Крок Месье"',
             text=text_sandwich,
             cooking_time=30,
@@ -547,7 +608,6 @@ class Command(BaseCommand):
             tag_salad,
             tag_hot_snack,
             tag_cold_snacks,
-            tag_dessert,
         )
 
         # Хлеб (для тостов) — 8 шт
