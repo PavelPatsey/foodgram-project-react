@@ -67,7 +67,8 @@ class Command(BaseCommand):
         )
         tag_hot_snack = Tag.objects.create(
             name="Горячие закуски",
-            color="#d24508",
+            # color="#d24508",
+            color="#ba6700",
             slug="hot_snack",
         )
         tag_cold_snacks = Tag.objects.create(
@@ -587,6 +588,126 @@ class Command(BaseCommand):
             ingredientamount_sour,
         )
 
+        # Создание рецепта Салат «Лаззат» с хрустящими баклажанами
+        with open("data/text_lazzat") as file:
+            text_lazzat = file.read().strip()
+        recipe_lazzat = Recipe.objects.create(
+            author=author_lena,
+            name="Салат «Лаззат» с хрустящими баклажанами",
+            text=text_lazzat,
+            cooking_time=20,
+        )
+
+        with open("data/base64code_lazzat") as file:
+            imgstr = file.read().strip()
+        data = ContentFile(base64.b64decode(imgstr), name="lazzat." + "png")
+        recipe_lazzat.image = data
+        recipe_lazzat.save()
+
+        recipe_lazzat.tags.add(tag_salad)
+
+        # баклажаны 2 шт.
+        ingredient_eggplant, _ = Ingredient.objects.get_or_create(
+            name="баклажаны",
+            measurement_unit="шт.",
+        )
+        ingredientamount_eggplant, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_eggplant,
+            amount=2,
+        )
+        # помидоры черри 10 шт.
+        ingredient_cherry, _ = Ingredient.objects.get_or_create(
+            name="помидоры черри",
+            measurement_unit="шт.",
+        )
+        ingredientamount_cherry, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cherry,
+            amount=10,
+        )
+        # чеснок 2 зубчика
+        ingredient_garlic, _ = Ingredient.objects.get_or_create(
+            name="чеснок",
+            measurement_unit="зубчик",
+        )
+        ingredientamount_garlic, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_garlic,
+            amount=2,
+        )
+        # кинза свежая 1 пучок
+        ingredient_cilantro, _ = Ingredient.objects.get_or_create(
+            name="кинза",
+            measurement_unit="пучок",
+        )
+        ingredientamount_cilantro, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cilantro,
+            amount=1,
+        )
+        # соевый соус 1 ст. л.
+        ingredient_soy, _ = Ingredient.objects.get_or_create(
+            name="соевый соус",
+            measurement_unit="ст. л.",
+        )
+        ingredientamount_soy, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_soy,
+            amount=1,
+        )
+        # соус чили сладкий 2 ст. л.
+        ingredient_chili, _ = Ingredient.objects.get_or_create(
+            name="соус чили сладкий",
+            measurement_unit="ст. л.",
+        )
+        ingredientamount_chili, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_chili,
+            amount=2,
+        )
+        # соль 1 щепотка
+        ingredient_salt, _ = Ingredient.objects.get_or_create(
+            name="соль",
+            measurement_unit="щепотка",
+        )
+        ingredientamount_salt, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_salt,
+            amount=1,
+        )
+        # перец свежемолотый смесь по вкусу
+        ingredient_pepper, _ = Ingredient.objects.get_or_create(
+            name="перец свежемолотый",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_pepper, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_pepper,
+            amount=1,
+        )
+        # кукурузный крахмал 5 ст. л.
+        ingredient_starch, _ = Ingredient.objects.get_or_create(
+            name="кукурузный крахмал",
+            measurement_unit="ст. л.",
+        )
+        ingredientamount_starch, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_starch,
+            amount=5,
+        )
+        # растительное масло для жарки по вкусу
+        ingredient_oil, _ = Ingredient.objects.get_or_create(
+            name="растительное масло",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_oil, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_oil,
+            amount=1,
+        )
+        recipe_lazzat.ingredients.add(
+            ingredientamount_eggplant,
+            ingredientamount_cherry,
+            ingredientamount_garlic,
+            ingredientamount_cilantro,
+            ingredientamount_soy,
+            ingredientamount_chili,
+            ingredientamount_salt,
+            ingredientamount_pepper,
+            ingredientamount_starch,
+        )
+
         # Создание рецепта Завтрак Сэндвич "Крок Месье"
         with open("data/text_sandwich") as file:
             text_sandwich = file.read().strip()
@@ -605,7 +726,6 @@ class Command(BaseCommand):
 
         recipe_sandwich.tags.add(
             tag_breakfast,
-            tag_salad,
             tag_hot_snack,
             tag_cold_snacks,
         )
