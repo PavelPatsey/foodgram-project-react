@@ -77,7 +77,7 @@ class Command(BaseCommand):
             slug="cold_snacks",
         )
         tag_breakfast = Tag.objects.create(
-            name="Завтрак",
+            name="Завтраки",
             color="#f44336",
             slug="breakfast",
         )
