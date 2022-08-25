@@ -34,36 +34,15 @@ class Command(BaseCommand):
             email="lenaarhipova@mail.ru",
         )
 
-        tag_drinks = Tag.objects.create(
-            name="Напитки",
-            color="#c69d21",
-            slug="drinks",
+        tag_breakfast = Tag.objects.create(
+            name="Завтраки",
+            color="#f44336",
+            slug="breakfast",
         )
-        tag_baked_goods = Tag.objects.create(
-            name="Выпечка",
-            color="#874e24",
-            slug="baked_goods",
-        )
-        tag_dessert = Tag.objects.create(
-            name="Десерты",
-            color="#ffb1d9",
-            slug="dessert",
-        )
-        tag_main_course = Tag.objects.create(
-            name="Основные блюда",
-            # color="#bf9000",
-            color="#bc4105",
-            slug="main_course",
-        )
-        tag_soup = Tag.objects.create(
-            name="Супы",
-            color="#800020",
-            slug="soup",
-        )
-        tag_salad = Tag.objects.create(
-            name="Салаты",
-            color="#48a357",
-            slug="salad",
+        tag_cold_snacks = Tag.objects.create(
+            name="Холодные закуски",
+            color="#4e8bc0",
+            slug="cold_snacks",
         )
         tag_hot_snack = Tag.objects.create(
             name="Горячие закуски",
@@ -71,15 +50,36 @@ class Command(BaseCommand):
             color="#ba6700",
             slug="hot_snack",
         )
-        tag_cold_snacks = Tag.objects.create(
-            name="Холодные закуски",
-            color="#4e8bc0",
-            slug="cold_snacks",
+        tag_salad = Tag.objects.create(
+            name="Салаты",
+            color="#48a357",
+            slug="salad",
         )
-        tag_breakfast = Tag.objects.create(
-            name="Завтраки",
-            color="#f44336",
-            slug="breakfast",
+        tag_soup = Tag.objects.create(
+            name="Супы",
+            color="#800020",
+            slug="soup",
+        )
+        tag_main_course = Tag.objects.create(
+            name="Основные блюда",
+            # color="#bf9000",
+            color="#bc4105",
+            slug="main_course",
+        )
+        tag_dessert = Tag.objects.create(
+            name="Десерты",
+            color="#ffb1d9",
+            slug="dessert",
+        )
+        tag_baked_goods = Tag.objects.create(
+            name="Выпечка",
+            color="#874e24",
+            slug="baked_goods",
+        )
+        tag_drinks = Tag.objects.create(
+            name="Напитки",
+            color="#c69d21",
+            slug="drinks",
         )
 
         # Создание рецепта напитки Лимонад
