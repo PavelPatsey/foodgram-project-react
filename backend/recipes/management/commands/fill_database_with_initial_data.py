@@ -81,205 +81,68 @@ class Command(BaseCommand):
             slug="breakfast",
         )
 
-        # Создание рецепта Завтрак Сэндвич "Крок Месье"
-        with open("data/text_sandwich") as file:
-            text_sandwich = file.read().strip()
-        recipe_sandwich = Recipe.objects.create(
-            author=author_lena,
-            name='Завтрак Сэндвич "Крок Месье"',
-            text=text_sandwich,
-            cooking_time=30,
+        # Создание рецепта напитки Лимонад
+        with open("data/text_lemonade") as file:
+            text_lemonade = file.read().strip()
+        recipe_lemonade = Recipe.objects.create(
+            author=author_pavel,
+            name="Освежающий лимонад",
+            text=text_lemonade,
+            cooking_time=60,
         )
 
-        with open("data/base64code_sandwich") as file:
+        with open("data/base64code_lemonade") as file:
             imgstr = file.read().strip()
-        data = ContentFile(base64.b64decode(imgstr), name="sandwich." + "png")
-        recipe_sandwich.image = data
-        recipe_sandwich.save()
+        data = ContentFile(base64.b64decode(imgstr), name="lemonade." + "png")
+        recipe_lemonade.image = data
+        recipe_lemonade.save()
 
-        recipe_sandwich.tags.add(tag_breakfast)
+        recipe_lemonade.tags.add(tag_drinks)
 
-        # Хлеб (для тостов) — 8 шт
-        ingredient_bread, _ = Ingredient.objects.get_or_create(
-            name="хлеб (для тостов)",
+        # Лимоны - 2 шт.
+        ingredient_lemon, _ = Ingredient.objects.get_or_create(
+            name="лимоны",
             measurement_unit="шт.",
         )
-        ingredientamount_bread, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_bread,
-            amount=8,
+        ingredientamount_lemon, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_lemon,
+            amount=2,
         )
-        # Ветчина (150 гр) — 4 шт
-        ingredient_ham, _ = Ingredient.objects.get_or_create(
-            name="ветчина",
+        # Мята перечная свежая - 6 веточек
+        ingredient_peppermint, _ = Ingredient.objects.get_or_create(
+            name="мята перечная свежая",
+            measurement_unit="веточка",
+        )
+        (
+            ingredientamount_peppermint,
+            _,
+        ) = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_peppermint,
+            amount=6,
+        )
+        # Сахар - 125 г
+        ingredient_sugar, _ = Ingredient.objects.get_or_create(
+            name="сахар",
             measurement_unit="г",
         )
-        ingredientamount_ham, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_ham,
-            amount=150,
+        ingredientamount_sugar, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_sugar,
+            amount=125,
         )
-        # Сыр твердый (желательно эмменталь) — 90 г
-        ingredient_cheese, _ = Ingredient.objects.get_or_create(
-            name="сыр Эмменталь",
-            measurement_unit="г",
-        )
-        ingredientamount_cheese, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_cheese,
-            amount=90,
-        )
-        # Молоко — 250 мл
-        ingredient_milk, _ = Ingredient.objects.get_or_create(
-            name="молоко",
+        # Вода - 2,5 л
+        ingredient_water, _ = Ingredient.objects.get_or_create(
+            name="вода",
             measurement_unit="мл",
         )
-        ingredientamount_milk, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_milk,
-            amount=250,
+        ingredientamount_water, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_water,
+            amount=2500,
         )
-        # Мука пшеничная / Мука — 1 ст. л.
-        ingredient_flour, _ = Ingredient.objects.get_or_create(
-            name="мука пшеничная",
-            measurement_unit="ст. л.",
-        )
-        ingredientamount_flour, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_flour,
-            amount=1,
-        )
-        # Масло сливочное — 20 г
-        ingredient_butter, _ = Ingredient.objects.get_or_create(
-            name="масло сливочное",
-            measurement_unit="г",
-        )
-        ingredientamount_butter, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_butter,
-            amount=20,
-        )
-        # соль - по вкусу
-        ingredient_salt, _ = Ingredient.objects.get_or_create(
-            name="соль",
-            measurement_unit="по вкусу",
-        )
-        ingredientamount_salt, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_salt,
-            amount=1,
-        )
-        # перец - по вкусу)
-        ingredient_pepper, _ = Ingredient.objects.get_or_create(
-            name="перец",
-            measurement_unit="по вкусу",
-        )
-        ingredientamount_pepper, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_pepper,
-            amount=1,
-        )
-        # Орех мускатный (на кончике ножа)
-        ingredient_nutmeg, _ = Ingredient.objects.get_or_create(
-            name="орех мускатный",
-            measurement_unit="на кончике ножа",
-        )
-        ingredientamount_nutmeg, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_nutmeg,
-            amount=1,
-        )
-        recipe_sandwich.ingredients.add(
-            ingredientamount_bread,
-            ingredientamount_ham,
-            ingredientamount_cheese,
-            ingredientamount_milk,
-            ingredientamount_flour,
-            ingredientamount_salt,
-            ingredientamount_pepper,
-            ingredientamount_nutmeg,
-        )
-
-        # Создание рецепта Паста карбонара с беконом и сливками
-        with open("data/text_carbonara") as file:
-            text_carbonara = file.read().strip()
-        recipe_carbonara = Recipe.objects.create(
-            author=author_lena,
-            name="Паста карбонара с беконом и сливками",
-            text=text_carbonara,
-            cooking_time=30,
-        )
-
-        with open("data/base64code_carbonara") as file:
-            imgstr = file.read().strip()
-        data = ContentFile(base64.b64decode(imgstr), name="sandwich." + "png")
-        recipe_carbonara.image = data
-        recipe_carbonara.save()
-
-        recipe_carbonara.tags.add(tag_main_course)
-
-        # Паста сухая - 100 г
-        ingredient_paste, _ = Ingredient.objects.get_or_create(
-            name="паста",
-            measurement_unit="г",
-        )
-        ingredientamount_paste, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_paste,
-            amount=100,
-        )
-        # Бекон или панчетта - 80-100 г
-        ingredient_bacon, _ = Ingredient.objects.get_or_create(
-            name="бекон",
-            measurement_unit="г",
-        )
-        ingredientamount_bacon, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_bacon,
-            amount=100,
-        )
-        # Сыр пармезан - 50 г
-        ingredient_parmesan, _ = Ingredient.objects.get_or_create(
-            name="сыр пармезан",
-            measurement_unit="г",
-        )
-        ingredientamount_parmesan, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_parmesan,
-            amount=50,
-        )
-        # Сливки 10-20% - 130 г
-        ingredient_cream, _ = Ingredient.objects.get_or_create(
-            name="сливки 10-20%",
-            measurement_unit="г",
-        )
-        ingredientamount_cream, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_cream,
-            amount=130,
-        )
-        # Яйцо - 1 шт.
-        ingredient_egg, _ = Ingredient.objects.get_or_create(
-            name="яйцо куриное",
-            measurement_unit="шт.",
-        )
-        ingredientamount_egg, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_egg,
-            amount=1,
-        )
-        # Перец черный
-        ingredient_pepper, _ = Ingredient.objects.get_or_create(
-            name="перец черный",
-            measurement_unit="по вкусу",
-        )
-        ingredientamount_pepper, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_pepper,
-            amount=1,
-        )
-        # Чеснок - по вкусу
-        ingredient_garlic, _ = Ingredient.objects.get_or_create(
-            name="чеснок",
-            measurement_unit="по вкусу",
-        )
-        ingredientamount_garlic, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_garlic,
-            amount=1,
-        )
-        recipe_carbonara.ingredients.add(
-            ingredientamount_paste,
-            ingredientamount_bacon,
-            ingredientamount_parmesan,
-            ingredientamount_cream,
-            ingredientamount_egg,
-            ingredientamount_pepper,
-            ingredientamount_garlic,
+        recipe_lemonade.ingredients.add(
+            ingredientamount_lemon,
+            ingredientamount_peppermint,
+            ingredientamount_sugar,
+            ingredientamount_water,
         )
 
         # Создание рецепта выпечка Сливовый пирог
@@ -386,6 +249,97 @@ class Command(BaseCommand):
             ingredientamount_eggs,
             ingredientamount_baking_powder,
             ingredientamount_cinnamon,
+        )
+
+        # Создание рецепта Паста карбонара с беконом и сливками
+        with open("data/text_carbonara") as file:
+            text_carbonara = file.read().strip()
+        recipe_carbonara = Recipe.objects.create(
+            author=author_lena,
+            name="Паста карбонара с беконом и сливками",
+            text=text_carbonara,
+            cooking_time=30,
+        )
+
+        with open("data/base64code_carbonara") as file:
+            imgstr = file.read().strip()
+        data = ContentFile(base64.b64decode(imgstr), name="sandwich." + "png")
+        recipe_carbonara.image = data
+        recipe_carbonara.save()
+
+        recipe_carbonara.tags.add(tag_main_course)
+
+        # Паста сухая - 100 г
+        ingredient_paste, _ = Ingredient.objects.get_or_create(
+            name="паста",
+            measurement_unit="г",
+        )
+        ingredientamount_paste, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_paste,
+            amount=100,
+        )
+        # Бекон или панчетта - 80-100 г
+        ingredient_bacon, _ = Ingredient.objects.get_or_create(
+            name="бекон",
+            measurement_unit="г",
+        )
+        ingredientamount_bacon, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_bacon,
+            amount=100,
+        )
+        # Сыр пармезан - 50 г
+        ingredient_parmesan, _ = Ingredient.objects.get_or_create(
+            name="сыр пармезан",
+            measurement_unit="г",
+        )
+        ingredientamount_parmesan, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_parmesan,
+            amount=50,
+        )
+        # Сливки 10-20% - 130 г
+        ingredient_cream, _ = Ingredient.objects.get_or_create(
+            name="сливки 10-20%",
+            measurement_unit="г",
+        )
+        ingredientamount_cream, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cream,
+            amount=130,
+        )
+        # Яйцо - 1 шт.
+        ingredient_egg, _ = Ingredient.objects.get_or_create(
+            name="яйцо куриное",
+            measurement_unit="шт.",
+        )
+        ingredientamount_egg, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_egg,
+            amount=1,
+        )
+        # Перец черный
+        ingredient_pepper, _ = Ingredient.objects.get_or_create(
+            name="перец черный",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_pepper, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_pepper,
+            amount=1,
+        )
+        # Чеснок - по вкусу
+        ingredient_garlic, _ = Ingredient.objects.get_or_create(
+            name="чеснок",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_garlic, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_garlic,
+            amount=1,
+        )
+        recipe_carbonara.ingredients.add(
+            ingredientamount_paste,
+            ingredientamount_bacon,
+            ingredientamount_parmesan,
+            ingredientamount_cream,
+            ingredientamount_egg,
+            ingredientamount_pepper,
+            ingredientamount_garlic,
         )
 
         # Создание рецепта суп Борщ
@@ -572,66 +526,118 @@ class Command(BaseCommand):
             ingredientamount_sour,
         )
 
-        # Создание рецепта напитки Лимонад
-        with open("data/text_lemonade") as file:
-            text_lemonade = file.read().strip()
-        recipe_lemonade = Recipe.objects.create(
-            author=author_pavel,
-            name="Освежающий лимонад",
-            text=text_lemonade,
-            cooking_time=60,
+        # Создание рецепта Завтрак Сэндвич "Крок Месье"
+        with open("data/text_sandwich") as file:
+            text_sandwich = file.read().strip()
+        recipe_sandwich = Recipe.objects.create(
+            author=author_lena,
+            name='Завтрак Сэндвич "Крок Месье"',
+            text=text_sandwich,
+            cooking_time=30,
         )
 
-        with open("data/base64code_lemonade") as file:
+        with open("data/base64code_sandwich") as file:
             imgstr = file.read().strip()
-        data = ContentFile(base64.b64decode(imgstr), name="lemonade." + "png")
-        recipe_lemonade.image = data
-        recipe_lemonade.save()
+        data = ContentFile(base64.b64decode(imgstr), name="sandwich." + "png")
+        recipe_sandwich.image = data
+        recipe_sandwich.save()
 
-        recipe_lemonade.tags.add(tag_drinks)
+        recipe_sandwich.tags.add(
+            tag_breakfast,
+            tag_salad,
+            tag_hot_snack,
+            tag_cold_snacks,
+            tag_dessert,
+        )
 
-        # Лимоны - 2 шт.
-        ingredient_lemon, _ = Ingredient.objects.get_or_create(
-            name="лимоны",
+        # Хлеб (для тостов) — 8 шт
+        ingredient_bread, _ = Ingredient.objects.get_or_create(
+            name="хлеб (для тостов)",
             measurement_unit="шт.",
         )
-        ingredientamount_lemon, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_lemon,
-            amount=2,
+        ingredientamount_bread, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_bread,
+            amount=8,
         )
-        # Мята перечная свежая - 6 веточек
-        ingredient_peppermint, _ = Ingredient.objects.get_or_create(
-            name="мята перечная свежая",
-            measurement_unit="веточка",
-        )
-        (
-            ingredientamount_peppermint,
-            _,
-        ) = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_peppermint,
-            amount=6,
-        )
-        # Сахар - 125 г
-        ingredient_sugar, _ = Ingredient.objects.get_or_create(
-            name="сахар",
+        # Ветчина (150 гр) — 4 шт
+        ingredient_ham, _ = Ingredient.objects.get_or_create(
+            name="ветчина",
             measurement_unit="г",
         )
-        ingredientamount_sugar, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_sugar,
-            amount=125,
+        ingredientamount_ham, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_ham,
+            amount=150,
         )
-        # Вода - 2,5 л
-        ingredient_water, _ = Ingredient.objects.get_or_create(
-            name="вода",
+        # Сыр твердый (желательно эмменталь) — 90 г
+        ingredient_cheese, _ = Ingredient.objects.get_or_create(
+            name="сыр Эмменталь",
+            measurement_unit="г",
+        )
+        ingredientamount_cheese, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cheese,
+            amount=90,
+        )
+        # Молоко — 250 мл
+        ingredient_milk, _ = Ingredient.objects.get_or_create(
+            name="молоко",
             measurement_unit="мл",
         )
-        ingredientamount_water, _ = IngredientAmount.objects.get_or_create(
-            ingredient=ingredient_water,
-            amount=2500,
+        ingredientamount_milk, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_milk,
+            amount=250,
         )
-        recipe_lemonade.ingredients.add(
-            ingredientamount_lemon,
-            ingredientamount_peppermint,
-            ingredientamount_sugar,
-            ingredientamount_water,
+        # Мука пшеничная / Мука — 1 ст. л.
+        ingredient_flour, _ = Ingredient.objects.get_or_create(
+            name="мука пшеничная",
+            measurement_unit="ст. л.",
+        )
+        ingredientamount_flour, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_flour,
+            amount=1,
+        )
+        # Масло сливочное — 20 г
+        ingredient_butter, _ = Ingredient.objects.get_or_create(
+            name="масло сливочное",
+            measurement_unit="г",
+        )
+        ingredientamount_butter, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_butter,
+            amount=20,
+        )
+        # соль - по вкусу
+        ingredient_salt, _ = Ingredient.objects.get_or_create(
+            name="соль",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_salt, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_salt,
+            amount=1,
+        )
+        # перец - по вкусу)
+        ingredient_pepper, _ = Ingredient.objects.get_or_create(
+            name="перец",
+            measurement_unit="по вкусу",
+        )
+        ingredientamount_pepper, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_pepper,
+            amount=1,
+        )
+        # Орех мускатный (на кончике ножа)
+        ingredient_nutmeg, _ = Ingredient.objects.get_or_create(
+            name="орех мускатный",
+            measurement_unit="на кончике ножа",
+        )
+        ingredientamount_nutmeg, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_nutmeg,
+            amount=1,
+        )
+        recipe_sandwich.ingredients.add(
+            ingredientamount_bread,
+            ingredientamount_ham,
+            ingredientamount_cheese,
+            ingredientamount_milk,
+            ingredientamount_flour,
+            ingredientamount_salt,
+            ingredientamount_pepper,
+            ingredientamount_nutmeg,
         )
