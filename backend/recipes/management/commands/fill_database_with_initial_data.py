@@ -34,31 +34,51 @@ class Command(BaseCommand):
             email="lenaarhipova@mail.ru",
         )
 
-        tag_breakfast = Tag.objects.create(
-            name="Завтрак",
-            color="#f44336",
-            slug="breakfast",
-        )
-        tag_main_course = Tag.objects.create(
-            name="Основное блюдо",
-            # color="#bf9000",
-            color="#bc4105",
-            slug="main_course",
+        tag_drinks = Tag.objects.create(
+            name="Напитки",
+            color="#c69d21",
+            slug="drinks",
         )
         tag_baked_goods = Tag.objects.create(
             name="Выпечка",
             color="#874e24",
             slug="baked_goods",
         )
+        tag_dessert = Tag.objects.create(
+            name="Десерты",
+            color="#ffb1d9",
+            slug="dessert",
+        )
+        tag_main_course = Tag.objects.create(
+            name="Основные блюда",
+            # color="#bf9000",
+            color="#bc4105",
+            slug="main_course",
+        )
         tag_soup = Tag.objects.create(
-            name="Суп",
+            name="Супы",
             color="#800020",
             slug="soup",
         )
-        tag_drinks = Tag.objects.create(
-            name="Напитки",
-            color="#c69d21",
-            slug="drinks",
+        tag_salad = Tag.objects.create(
+            name="Салаты",
+            color="#48a357",
+            slug="salad",
+        )
+        tag_hot_snack = Tag.objects.create(
+            name="Горячие закуски",
+            color="#d24508",
+            slug="hot_snack",
+        )
+        tag_cold_snacks = Tag.objects.create(
+            name="Холодные закуски",
+            color="#4e8bc0",
+            slug="cold_snacks",
+        )
+        tag_breakfast = Tag.objects.create(
+            name="Завтрак",
+            color="#f44336",
+            slug="breakfast",
         )
 
         # Создание рецепта Завтрак Сэндвич "Крок Месье"
