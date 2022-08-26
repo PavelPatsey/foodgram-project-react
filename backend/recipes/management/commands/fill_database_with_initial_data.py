@@ -708,6 +708,72 @@ class Command(BaseCommand):
             ingredientamount_starch,
         )
 
+        # Создание рецепта Горячая закуска Жареный сыр в панировке
+        with open("data/text_fried_cheese") as file:
+            text_fried_cheese = file.read().strip()
+        recipe_fried_cheese = Recipe.objects.create(
+            author=author_pavel,
+            name="Салат «Жареный сыр в панировке",
+            text=text_fried_cheese,
+            cooking_time=20,
+        )
+
+        with open("data/base64code_fried_cheese") as file:
+            imgstr = file.read().strip()
+        data = ContentFile(
+            base64.b64decode(imgstr), name="fried_cheese." + "png"
+        )
+        recipe_fried_cheese.image = data
+        recipe_fried_cheese.save()
+
+        recipe_fried_cheese.tags.add(tag_hot_snack)
+
+        # 80 г. сыра
+        ingredient_cheese, _ = Ingredient.objects.get_or_create(
+            name="сыр",
+            measurement_unit="г",
+        )
+        ingredientamount_cheese, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cheese,
+            amount=80,
+        )
+        # 10 г. панировочных сухарей
+        ingredient_breadcrumbs, _ = Ingredient.objects.get_or_create(
+            name="панировочные сухари",
+            measurement_unit="г",
+        )
+        (
+            ingredientamount_breadcrumbs,
+            _,
+        ) = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_breadcrumbs,
+            amount=10,
+        )
+        # 10 г. сливочного масла
+        ingredient_butter, _ = Ingredient.objects.get_or_create(
+            name="масло сливочное",
+            measurement_unit="г",
+        )
+        ingredientamount_butter, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_butter,
+            amount=10,
+        )
+        # 5 г. зелени петрушки
+        ingredient_parsley, _ = Ingredient.objects.get_or_create(
+            name="зелень петрушки",
+            measurement_unit="г",
+        )
+        ingredientamount_parsley, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_parsley,
+            amount=5,
+        )
+        recipe_fried_cheese.ingredients.add(
+            ingredientamount_cheese,
+            ingredientamount_breadcrumbs,
+            ingredientamount_butter,
+            ingredientamount_parsley,
+        )
+
         # Создание рецепта Завтрак Сэндвич "Крок Месье"
         with open("data/text_sandwich") as file:
             text_sandwich = file.read().strip()
@@ -726,7 +792,6 @@ class Command(BaseCommand):
 
         recipe_sandwich.tags.add(
             tag_breakfast,
-            tag_hot_snack,
             tag_cold_snacks,
         )
 
