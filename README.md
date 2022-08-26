@@ -17,9 +17,11 @@ Foodgram реализован для публикации рецептов. Ав
 - [Docker](https://docs.docker.com/engine/install/ubuntu/), [Dockerfile](https://docs.docker.com/engine/reference/builder/), [Docker Compose](https://docs.docker.com/compose/).
 
 ## Проект в интернете
-Проект запущен и доступен по адресу [http://130.193.41.48](http://130.193.41.48)
+Проект запущен и доступен по адресу [http://130.193.41.48/recipes](http://130.193.41.48/recipes)
 
 Админка доступна по адресу [http://130.193.41.48/admin/](http://130.193.41.48/admin/)
+
+Документация для написания api проекта доступна по адресу [http://130.193.41.48/api/docs/redoc.html](http://130.193.41.48/api/docs/redoc.html)
 
 ## Подготовка и запуск проекта
 * Склонируйте репозиторий на локальную машину.
