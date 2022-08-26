@@ -713,7 +713,7 @@ class Command(BaseCommand):
             text_fried_cheese = file.read().strip()
         recipe_fried_cheese = Recipe.objects.create(
             author=author_pavel,
-            name="Салат «Жареный сыр в панировке",
+            name="Жареный сыр в панировке",
             text=text_fried_cheese,
             cooking_time=20,
         )
@@ -774,6 +774,70 @@ class Command(BaseCommand):
             ingredientamount_parsley,
         )
 
+        # Создание рецепта Холодная закуска Брускетта с красной рыбой
+        with open("data/text_bruschetta") as file:
+            text_bruschetta = file.read().strip()
+        recipe_bruschetta = Recipe.objects.create(
+            author=author_lena,
+            name="Брускетта с красной рыбой",
+            text=text_bruschetta,
+            cooking_time=20,
+        )
+
+        with open("data/base64code_bruschetta") as file:
+            imgstr = file.read().strip()
+        data = ContentFile(
+            base64.b64decode(imgstr), name="bruschetta." + "png"
+        )
+        recipe_bruschetta.image = data
+        recipe_bruschetta.save()
+
+        recipe_bruschetta.tags.add(tag_cold_snacks)
+
+        # Рыба красная слабосоленая - 150 г
+        ingredient_fish, _ = Ingredient.objects.get_or_create(
+            name="красная рыба слабосоленая",
+            measurement_unit="г",
+        )
+        ingredientamount_fish, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_fish,
+            amount=150,
+        )
+        # Багет - 6 кусочков
+        ingredient_baguette, _ = Ingredient.objects.get_or_create(
+            name="багет",
+            measurement_unit="ломтик",
+        )
+        ingredientamount_baguette, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_baguette,
+            amount=6,
+        )
+        # Творожный сыр - 60гр
+        ingredient_cheese, _ = Ingredient.objects.get_or_create(
+            name="творожный сыр",
+            measurement_unit="ломтик",
+        )
+        ingredientamount_cheese, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cheese,
+            amount=6,
+        )
+        # Свежий огурец - 1шт
+        ingredient_cucumber, _ = Ingredient.objects.get_or_create(
+            name="огурец",
+            measurement_unit="шт.",
+        )
+        ingredientamount_cucumber, _ = IngredientAmount.objects.get_or_create(
+            ingredient=ingredient_cucumber,
+            amount=1,
+        )
+
+        recipe_bruschetta.ingredients.add(
+            ingredientamount_fish,
+            ingredientamount_baguette,
+            ingredientamount_cheese,
+            ingredientamount_cucumber,
+        )
+
         # Создание рецепта Завтрак Сэндвич "Крок Месье"
         with open("data/text_sandwich") as file:
             text_sandwich = file.read().strip()
@@ -790,10 +854,7 @@ class Command(BaseCommand):
         recipe_sandwich.image = data
         recipe_sandwich.save()
 
-        recipe_sandwich.tags.add(
-            tag_breakfast,
-            tag_cold_snacks,
-        )
+        recipe_sandwich.tags.add(tag_breakfast)
 
         # Хлеб (для тостов) — 8 шт
         ingredient_bread, _ = Ingredient.objects.get_or_create(
