@@ -16,6 +16,11 @@ Foodgram реализован для публикации рецептов. Ав
 - система управления версиями - git
 - [Docker](https://docs.docker.com/engine/install/ubuntu/), [Dockerfile](https://docs.docker.com/engine/reference/builder/), [Docker Compose](https://docs.docker.com/compose/).
 
+## Проект в интернете
+Проект запущен и доступен по адресу [http://130.193.41.48](http://130.193.41.48)
+
+Админка доступна по адресу [http://130.193.41.48/admin/](http://130.193.41.48/admin/)
+
 ## Подготовка и запуск проекта
 * Склонируйте репозиторий на локальную машину.
 
@@ -81,8 +86,3 @@ scp -r docs <username>@<ip host>@130.193.41.48:/home/<username>/
     sudo docker-compose exec backend python3 manage.py fill_database_with_initial_data
     ```
     - Проект будет доступен по IP вашего сервера.
-  
-## Проект в интернете
-Проект запущен и доступен по адресу [http://130.193.41.48](http://130.193.41.48)
-
-Админка доступна по адресу [http://130.193.41.48/admin/](http://130.193.41.48/admin/)
