@@ -63,7 +63,8 @@ class Command(BaseCommand):
         tag_main_course = Tag.objects.create(
             name="Основные блюда",
             # color="#bf9000",
-            color="#bc4105",
+            # color="#bc4105",
+            color="#ff7f7f",
             slug="main_course",
         )
         tag_dessert = Tag.objects.create(
