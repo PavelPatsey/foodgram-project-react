@@ -1,6 +1,6 @@
 # Проект Foodgram
 
-![Foodgram workflow](https://github.com/PavelPatsey/foodgram-project-react/blob/master/.github/workflows/main.yml/badge.svg)
+![Foodgram workflow](https://github.com/PavelPatsey/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
 Foodgram реализован для публикации рецептов. Авторизованные пользователи
 могут подписываться на понравившихся авторов, добавлять рецепты в избранное,
@@ -84,4 +84,5 @@ scp -r docs <username>@<ip host>@130.193.41.48:/home/<username>/
   
 ## Проект в интернете
 Проект запущен и доступен по адресу [http://130.193.41.48](http://130.193.41.48)
+
 Админка доступна по адресу [http://130.193.41.48/admin/](http://130.193.41.48/admin/)
