@@ -86,3 +86,6 @@ scp -r docs <username>@<ip host>@130.193.41.48:/home/<username>/
     sudo docker-compose exec backend python3 manage.py fill_database_with_initial_data
     ```
     - Проект будет доступен по IP вашего сервера.
+
+## Автор
+[Пацей Павел](https://github.com/PavelPatsey)
